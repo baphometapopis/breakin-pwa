@@ -1,0 +1,99 @@
+@import url('../../colors.css');
+
+.container {
+  background-color:var(--BACKGROUND_COLOR);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.optionCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%; /* Adjusted width for mobile devices */
+  max-width: 500px; 
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
+}
+
+.row {
+  margin-bottom: 15px;
+}
+.rowlogo {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.col6 {
+  flex: 0 0 100%; /* Full width on small screens */
+  max-width: 100%; /* Full width on small screens */
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.logoImage {
+  display: block;
+  max-width: 150px; /* Ensure image fits within its container */
+  height: auto;
+}
+
+label {
+  color: #333;
+  font-weight: 500;
+  margin: 2px;
+}
+
+.customercare,
+.StartInspection {
+  margin-top: 15px;
+  background-color: #6ea4e3;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  margin-right: 10px;
+}
+
+.StartInspection {
+  background-color: #44ca82;
+}
+
+.StartInspection img,
+.customercare img {
+  height: 20px;
+  margin-right: 5px;
+}
+
+.label {
+  color: #888; /* Light grey color for labels */
+  font-weight: 500;
+  margin: 2px;
+}
+
+.value {
+  color: #000; /* Black color for values */
+  font-weight: 500;
+  margin: 2px;
+}
+
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .optionCard {
+    width: 95%; /* Adjusted width for smaller screens */
+    height: ;
+  }
+  .logoImage{
+    max-width: 80%; /* Ensure image fits within its container */
+
+  }
+  .rowlogo{
+    flex-direction: column;
+  }
+}
