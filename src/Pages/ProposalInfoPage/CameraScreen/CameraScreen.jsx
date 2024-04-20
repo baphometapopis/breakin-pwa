@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
+import "./CameraScreen.css"; // Import the CSS file
 
 const CameraScreen = ({ onCapture }) => {
   const [isCameraAllowed, setIsCameraAllowed] = useState(false);
@@ -24,11 +25,13 @@ const CameraScreen = ({ onCapture }) => {
   };
 
   return (
-    <div>
+    <div className="camera-container">
       {!isCameraAllowed ? (
         <div>
-          <p>Please allow access to your camera:</p>
-          <button onClick={requestCameraAccess}>Allow Camera Access</button>
+          <p className="camera-message">Please allow access to your camera:</p>
+          <button className="camera-button" onClick={requestCameraAccess}>
+            Allow Camera Access
+          </button>
         </div>
       ) : (
         <div>
@@ -37,15 +40,14 @@ const CameraScreen = ({ onCapture }) => {
             audio={false}
             screenshotFormat="image/jpeg"
             width="100%"
+            className="camera-video"
             videoConstraints={{
               facingMode: "environment", // Use 'user' for front camera, 'environment' for rear camera
             }}
-            style={{
-              maxHeight: "80vh", // Limit the height of the video to ensure it fits on mobile screens
-              objectFit: "cover", // Ensure the video fills the entire container on mobile screens
-            }}
           />
-          <button onClick={handleCapture}>Capture</button>
+          <button className="camera-button" onClick={handleCapture}>
+            Capture
+          </button>
         </div>
       )}
     </div>

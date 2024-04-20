@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import ProposalInfoPage from "./Pages/ProposalInfoPage/ProposalInfoPage";
 
 import HomePage from "./Pages/ProposalInfoPage/Home/HomePage";
-import CameraScreen from "./Pages/ProposalInfoPage/CameraScreen";
+import CameraScreen from "./Pages/ProposalInfoPage/CameraScreen/CameraScreen";
  
 function App() {
   return (
