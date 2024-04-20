@@ -2,15 +2,24 @@ import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
 import "./CameraScreen.css"; // Import the CSS file
 
-const CameraScreen = ({ onCapture }) => {
+const CameraScreen = () => {
   const [isCameraAllowed, setIsCameraAllowed] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
   const webcamRef = useRef(null);
 
   const handleCapture = () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
-      onCapture(imageSrc);
+      setCapturedImage(imageSrc);
     }
+  };
+
+  const retakePhoto = () => {
+    setCapturedImage(null);
+  };
+
+  const savePhoto = () => {
+    console.log(capturedImage, "Capture");
   };
 
   const requestCameraAccess = () => {
@@ -35,19 +44,39 @@ const CameraScreen = ({ onCapture }) => {
         </div>
       ) : (
         <div>
-          <Webcam
-            ref={webcamRef}
-            audio={false}
-            screenshotFormat="image/jpeg"
-            width="100%"
-            className="camera-video"
-            videoConstraints={{
-              facingMode: "environment", // Use 'user' for front camera, 'environment' for rear camera
-            }}
-          />
-          <button className="camera-button" onClick={handleCapture}>
-            Capture
-          </button>
+          {!capturedImage ? (
+            <div>
+              <Webcam
+                ref={webcamRef}
+                audio={false}
+                screenshotFormat="image/jpeg"
+                width="100%"
+                className="camera-video"
+                videoConstraints={{
+                  facingMode: "environment", // Use 'user' for front camera, 'environment' for rear camera
+                }}
+              />
+              <button className="camera-button" onClick={handleCapture}>
+                Capture
+              </button>
+            </div>
+          ) : (
+            <div>
+              <img
+                src={capturedImage}
+                alt="Captured"
+                className="captured-image"
+              />
+              <div className="save-button-container">
+                <button className="save-button" onClick={savePhoto}>
+                  Save
+                </button>
+                <button className="retake-button" onClick={retakePhoto}>
+                  Retake
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
