@@ -33,6 +33,17 @@ const CameraScreen = () => {
       });
   };
 
+  const handleImageClick = () => {
+    // Open the captured image in full screen
+    if (capturedImage) {
+      const fullScreenImg = window.open("", "_blank");
+      fullScreenImg.document.write(
+        `<img src="${capturedImage}" style="width: 100vw; height: 100vh; object-fit: contain;" />`
+      );
+      fullScreenImg.document.close();
+    }
+  };
+
   return (
     <div className="camera-container">
       {!isCameraAllowed ? (
@@ -66,6 +77,7 @@ const CameraScreen = () => {
                 src={capturedImage}
                 alt="Captured"
                 className="captured-image"
+                onClick={handleImageClick} // Handle click to view in full screen
               />
               <div className="save-button-container">
                 <button className="save-button" onClick={savePhoto}>
