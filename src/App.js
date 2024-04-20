@@ -4,7 +4,7 @@ import ProposalInfoPage from "./Pages/ProposalInfoPage/ProposalInfoPage";
 
 import HomePage from "./Pages/ProposalInfoPage/Home/HomePage";
 import CameraScreen from "./Pages/ProposalInfoPage/CameraScreen";
-
+ 
 function App() {
   return (
     <BrowserRouter>
