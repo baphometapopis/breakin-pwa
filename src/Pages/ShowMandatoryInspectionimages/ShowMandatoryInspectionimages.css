@@ -7,6 +7,7 @@
     align-items: center;
     background-color: var(--BACKGROUND_COLOR);
     width: 100vw;
+    height: 100%;
 }
 
 .imageGrid {
@@ -25,12 +26,7 @@
     border-radius: 5px;
 }
 
-/* Adjust width to take up 100% */
-@media (max-width: 600px) {
-    .imageContainer {
-        width: 100%; /* Adjust width as needed */
-    }
-}
+
 
 .image {
     width: 100%;
@@ -129,4 +125,13 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+/* Adjust width to take up 100% */
+@media (max-width: 600px) {
+    .imageContainer {
+        width: 100%; /* Adjust width as needed */
+    }
+    .container1 {
+    height: 100%;
+    }
 }

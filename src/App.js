@@ -4,6 +4,8 @@ import HomePage from "./Pages/Home/HomePage";
 import CameraScreen from "./Pages/CameraScreen/CameraScreen";
 import ProposalInfoPage from "./Pages/ProposalInfoPage/ProposalInfoPage";
 import ShowinspectionImages from "./Pages/ShowMandatoryInspectionimages/ShowMandatoryInspectionimages";
+import VideoRecorder from "./Pages/VideoRecord";
+import VideoPreview from "./Pages/VideoPreview";
 
 function App() {
   return (
@@ -15,8 +17,12 @@ function App() {
           element={<ProposalInfoPage />}
         />
         <Route path="/camera" element={<CameraScreen />} />
-        <Route path="/ShowInspectionImages" element={<ShowinspectionImages />} />
-
+        <Route
+          path="/ShowInspectionImages"
+          element={<ShowinspectionImages />}
+        />
+        <Route path="/VideoRecord" element={<VideoRecorder />} />
+        <Route path="/VideoPreview" element={<VideoPreview />} />
       </Routes>
     </BrowserRouter>
   );
