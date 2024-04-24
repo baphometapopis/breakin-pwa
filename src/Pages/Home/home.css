@@ -1,3 +1,5 @@
+@import url('../../colors.css');
+
 .container {
     display: flex;
     justify-content: center;
@@ -21,7 +23,7 @@
   }
   
   .search-bar button {
-    background-color: #24ACE3;
+    background-color: var(--BACKGROUND_COLOR);
     color: white;
     border: none;
     border-radius: 0 20px 20px 0;
@@ -30,6 +32,6 @@
   }
   
   .search-bar button:hover {
-    background-color: #1A88B0;
+    background-color: var(--BACKGROUND_COLOR);
   }
   
