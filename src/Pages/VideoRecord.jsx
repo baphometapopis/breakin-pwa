@@ -1,4 +1,4 @@
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import Webcam from "react-webcam";
 import "./VideoRecorder.css";
 
@@ -74,6 +74,10 @@ const VideoRecorder = () => {
           className="videoRecord "
           audio={false}
           ref={webcamRef}
+videoConstraints={{
+  facingMode:'environment'
+}}
+
           // videoConstraints={
           //   {
           //     width:100000,
@@ -82,6 +86,7 @@ const VideoRecorder = () => {
           // }
           // mirrored={true}
           // style={{ width: "100vh", height: "100%" }}
+          
         />
       </div>
       {/* <div>
