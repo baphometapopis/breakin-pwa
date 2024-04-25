@@ -117,6 +117,7 @@ const CameraScreen = () => {
             idealFacingMode="environment"
             isMaxResolution={true}
             imageType="jpg"
+            isFullscreen={true}
             imageCompression={0.97}
             isImageMirror={true}
           />
