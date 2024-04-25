@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import "./CameraScreen.css"; // Import the CSS file
@@ -106,6 +107,39 @@ const CameraScreen = () => {
     setIsModalOpen(false);
     setCurrentImageIndex(currentImageIndex + 1); // Move to the next image
   };
+
+  useEffect(() => {
+    const lockOrientation = async () => {
+      try {
+        // Check if the screen orientation API is available
+        if (screen.orientation) {
+          // Check if the document is in fullscreen mode
+          if (document.fullscreenElement) {
+            // Attempt to lock the screen orientation to landscape
+            await screen.orientation.lock("landscape");
+            console.log("Orientation locked successfully.");
+          } else {
+            console.log("Page needs to be fullscreen.");
+          }
+        } else {
+          console.log("Screen orientation API not available.");
+        }
+      } catch (error) {
+        console.error("Failed to lock orientation:", error.message);
+      }
+    };
+
+    lockOrientation();
+
+    // Cleanup function to unlock the orientation when component unmounts
+    return () => {
+      if (screen.orientation) {
+        // Unlock the screen orientation
+        screen.orientation.unlock();
+        console.log("Orientation unlocked.");
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Fetch the array of images when component mounts

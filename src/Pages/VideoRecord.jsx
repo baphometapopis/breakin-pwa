@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useRef } from "react";
 import Webcam from "react-webcam";
-import "./VideoRecorder.css";
 
 const VideoRecorder = () => {
   const webcamRef = useRef(null);
@@ -11,9 +10,14 @@ const VideoRecorder = () => {
       try {
         // Check if the screen orientation API is available
         if (screen.orientation) {
-          // Attempt to lock the screen orientation to landscape
-          await screen.orientation.lock("landscape");
-          console.log("Orientation locked successfully.");
+          // Check if the document is in fullscreen mode
+          if (document.fullscreenElement) {
+            // Attempt to lock the screen orientation to landscape
+            await screen.orientation.lock("landscape");
+            console.log("Orientation locked successfully.");
+          } else {
+            console.log("Page needs to be fullscreen.");
+          }
         } else {
           console.log("Screen orientation API not available.");
         }
@@ -33,26 +37,37 @@ const VideoRecorder = () => {
       }
     };
   }, []);
+
+  const handleFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch((err) => {
+        console.log("Failed to enter fullscreen:", err.message);
+      });
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        // backgroundColor: "red",
-        // height: "100vh",
-        width: "100vw",
-      }}
-    >
+    <div className="camera-container">
       <div style={{ padding: "10px" }}>
-        <Webcam
-          className="videoRecord"
-          audio={false}
-          ref={webcamRef}
-          videoConstraints={{
-            facingMode: "environment",
-          }}
-        />
+        <button onClick={handleFullscreen}>Fullscreen</button>
+        <div>
+          <Webcam
+            ref={webcamRef}
+            audio={false}
+            mirrored={true}
+            screenshotFormat="image/webp"
+            screenshotQuality={0.9}
+            width="100%"
+            className="camera-video"
+            videoConstraints={{
+              facingMode: "environment", // Use 'user' for front camera, 'environment' for rear camera
+            }}
+          />
+          {/* <button className="camera-button" onClick={handleCapture}>
+            Capture
+          </button> */}
+        </div>
       </div>
     </div>
   );
