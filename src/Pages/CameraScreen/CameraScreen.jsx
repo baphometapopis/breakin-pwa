@@ -66,7 +66,30 @@ const CameraScreen = () => {
     },
   ];
 
-  useEffect(() => {}, [isModalOpen]);
+  useEffect(() => {
+    // Check if the device is mobile and lock the orientation to landscape
+    const lockLandscapeOrientation = () => {
+      if (
+        window.screen &&
+        window.screen.orientation &&
+        typeof window.screen.orientation.lock === "function"
+      ) {
+        window.screen.orientation.lock("landscape");
+        console.log("landscape");
+      }
+    };
+
+    const isMobileDevice =
+      typeof window.orientation !== "undefined" ||
+      navigator.userAgent.indexOf("IEMobile") !== -1;
+
+    if (isMobileDevice) {
+      console.log("mobilelandscape");
+
+      lockLandscapeOrientation();
+    }
+  }, []);
+
   return (
     <div className="camera-container">
       {isModalOpen && (
@@ -120,6 +143,7 @@ const CameraScreen = () => {
             isFullscreen={true}
             imageCompression={0.97}
             isImageMirror={true}
+            idealResolution={{ width: 1280, height: 720 }}
           />
         </div>
       )}
