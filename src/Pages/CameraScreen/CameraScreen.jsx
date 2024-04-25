@@ -5,7 +5,7 @@ import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
 
 const CameraScreen = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
   const [allCapturedImages, setAllCapturedImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -13,7 +13,6 @@ const CameraScreen = () => {
 
   const handleTakePhoto = (dataUri) => {
     setCapturedImage(dataUri);
-    setIsModalOpen(true);
   };
 
   const handleRetakePhoto = () => {
@@ -21,18 +20,19 @@ const CameraScreen = () => {
   };
 
   const handleSavePhoto = () => {
-    if (currentImageIndex < images.length - 1) {
+    if (capturedImage) {
       setAllCapturedImages([...allCapturedImages, capturedImage]);
-      setCurrentImageIndex(currentImageIndex + 1);
-      setCapturedImage(null);
-    } else {
-      setAllCapturedImages([...allCapturedImages, capturedImage]);
-      navigation("/ShowInspectionImages", {
-        state: {
-          capturedImagesWithOverlay: allCapturedImages,
-          proposalInfo: "info",
-        },
-      });
+      if (currentImageIndex < images.length - 1) {
+        setCurrentImageIndex(currentImageIndex + 1);
+        setCapturedImage(null);
+      } else {
+        navigation("/ShowInspectionImages", {
+          state: {
+            capturedImagesWithOverlay: allCapturedImages,
+            proposalInfo: "info",
+          },
+        });
+      }
     }
   };
 
@@ -105,7 +105,6 @@ const CameraScreen = () => {
       )}
       {!isModalOpen && (
         <div>
-          <p className="camera-message">Please allow access to your camera:</p>
           <Camera
             onTakePhoto={(dataUri) => handleTakePhoto(dataUri)}
             idealFacingMode="environment"
