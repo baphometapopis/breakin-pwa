@@ -137,7 +137,7 @@ const CameraScreen = () => {
         <div>
           <Camera
             onTakePhoto={(dataUri) => handleTakePhoto(dataUri)}
-            idealFacingMode="environment"
+            idealFacingMode="landscape"
             isMaxResolution={true}
             imageType="jpg"
             isFullscreen={true}
