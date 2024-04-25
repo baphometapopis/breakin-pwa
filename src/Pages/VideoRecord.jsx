@@ -12,13 +12,13 @@ const VideoRecorder = () => {
         // Check if the screen orientation API is available
         if (screen.orientation) {
           // Attempt to lock the screen orientation to landscape
-          await screen.orientation.lock('landscape');
-          console.log('Orientation locked successfully.');
+          await screen.orientation.lock("landscape");
+          console.log("Orientation locked successfully.");
         } else {
-          console.log('Screen orientation API not available.');
+          console.log("Screen orientation API not available.");
         }
       } catch (error) {
-        console.error('Failed to lock orientation:', error.message);
+        console.error("Failed to lock orientation:", error.message);
       }
     };
 
@@ -29,7 +29,7 @@ const VideoRecorder = () => {
       if (screen.orientation) {
         // Unlock the screen orientation
         screen.orientation.unlock();
-        console.log('Orientation unlocked.');
+        console.log("Orientation unlocked.");
       }
     };
   }, []);
