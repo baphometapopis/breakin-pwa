@@ -1,4 +1,4 @@
-/* VideoRecorder.css */
+VideoRecorder.css
 
 .videoRecorderContainer {
     display: flex;
@@ -32,16 +32,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        overflow: hidden; /* Hide scrollbar */
-        position: relative; /* Positioning context for absolute positioning */
+        overflow: hidden; 
+        position: relative; 
       }
       
-    .videoRecord{
-        height: 100%;
-        width: 100%;    
-        /* transform: translate(-50%, -50%) rotate(90deg); Rotate 90 degrees for landscape */
-
-    }
+  
   
     button {
       font-size: 14px;

@@ -1,110 +1,59 @@
-import React, { useRef } from "react";
+/* eslint-disable no-restricted-globals */
+import React, { useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 import "./VideoRecorder.css";
 
 const VideoRecorder = () => {
   const webcamRef = useRef(null);
-  // const mediaRecorderRef = useRef(null);
-  // const [capturing, setCapturing] = useState(false);
-  // const [recordedChunks, setRecordedChunks] = useState([]);
-  // const [videoLength, setVideoLength] = useState(0);
 
-  // const handleStartCaptureClick = useCallback(() => {
-  //   // setCapturing(true);
-  //   mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-  //     mimeType: "video/webm",
-  //   });
-  //   mediaRecorderRef.current.addEventListener(
-  //     "dataavailable",
-  //     handleDataAvailable
-  //   );
-  //   mediaRecorderRef.current.start();
-  // }, [webcamRef, mediaRecorderRef]);
+  useEffect(() => {
+    const lockOrientation = async () => {
+      try {
+        // Check if the screen orientation API is available
+        if (screen.orientation) {
+          // Attempt to lock the screen orientation to landscape
+          await screen.orientation.lock('landscape');
+          console.log('Orientation locked successfully.');
+        } else {
+          console.log('Screen orientation API not available.');
+        }
+      } catch (error) {
+        console.error('Failed to lock orientation:', error.message);
+      }
+    };
 
-  // const handleDataAvailable = useCallback(
-  //   ({ data }) => {
-  //     if (data.size > 0) {
-  //       setRecordedChunks((prev) => prev.concat(data));
-  //       const recordedTime = recordedChunks.reduce(
-  //         (total, chunk) => total + chunk.duration,
-  //         0
-  //       );
-  //       setVideoLength(recordedTime);
-  //     }
-  //   },
-  //   [setRecordedChunks, recordedChunks, setVideoLength]
-  // );
+    lockOrientation();
 
-  // const handleStopCaptureClick = useCallback(() => {
-  //   mediaRecorderRef.current.stop();
-  //   // setCapturing(false);
-  // }, [mediaRecorderRef]);
-
-  // const handleDownload = useCallback(() => {
-  //   if (recordedChunks.length) {
-  //     const blob = new Blob(recordedChunks, {
-  //       type: "video/webm",
-  //     });
-  //     const url = URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     document.body.appendChild(a);
-  //     a.style = "display: none";
-  //     a.href = url;
-  //     a.download = "recorded-video.webm";
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //     setRecordedChunks([]);
-  //   }
-  // }, [recordedChunks]);
-
-  // useEffect(() => {}, [videoLength]);
+    // Cleanup function to unlock the orientation when component unmounts
+    return () => {
+      if (screen.orientation) {
+        // Unlock the screen orientation
+        screen.orientation.unlock();
+        console.log('Orientation unlocked.');
+      }
+    };
+  }, []);
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "red",
+        // backgroundColor: "red",
         // height: "100vh",
         width: "100vw",
       }}
     >
-      <div style={{ backgroundColor: "green", padding: "10px" }}>
+      <div style={{ padding: "10px" }}>
         <Webcam
-          className="videoRecord "
+          className="videoRecord"
           audio={false}
           ref={webcamRef}
-videoConstraints={{
-  facingMode:'environment'
-}}
-
-          // videoConstraints={
-          //   {
-          //     width:100000,
-          //     height:10000
-          //   }
-          // }
-          // mirrored={true}
-          // style={{ width: "100vh", height: "100%" }}
-          
+          videoConstraints={{
+            facingMode: "environment",
+          }}
         />
       </div>
-      {/* <div>
-        {!capturing && (
-          <button onClick={handleStartCaptureClick}>Start Capture</button>
-        )}
-        {capturing && (
-          <button onClick={handleStopCaptureClick}>Stop Capture</button>
-        )}
-        {recordedChunks.length > 0 && (
-          <button onClick={handleDownload}>Download</button>
-        )}
-      </div>
-      {capturing && (
-        <p>
-          Video Length: {Math.floor(videoLength / 60)}:{videoLength % 60}
-        </p>
-      )} */}
     </div>
   );
 };
