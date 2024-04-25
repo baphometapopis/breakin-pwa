@@ -18,7 +18,7 @@ const ShowinspectionImages = ({ route }) => {
     // Simulate submission success
     setTimeout(() => {
       setIsLoading(false);
-    //   setRequestDone(true);
+      //   setRequestDone(true);
     }, 2000);
   };
 
@@ -42,13 +42,15 @@ const ShowinspectionImages = ({ route }) => {
             {/* {submittedImages.includes(item.part) && (
               <img className="checkIcon" src={IconCheck} alt="Check Icon" />
             )} */}
+            {console.log(item)}
             <img
+
               className="image"
-              src={item.image}
-              alt={item.name}
-              onClick={() => handleImagePress(item.image)}
+              src={item?.images}
+              alt={item?.imagename}
+              onClick={() => handleImagePress(item.images)}
             />
-            <p className="overlayText">{item.name}</p>
+            <p className="overlayText">{item?.imagename}</p>
           </div>
         ))}
       </div>

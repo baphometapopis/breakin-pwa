@@ -21,7 +21,12 @@ const CameraScreen = () => {
 
   const handleSavePhoto = () => {
     if (capturedImage) {
-      setAllCapturedImages([...allCapturedImages, capturedImage]);
+      const data = {
+        images: capturedImage,
+        imagename: images[currentImageIndex]?.name,
+      };
+      setAllCapturedImages([...allCapturedImages, data]);
+
       if (currentImageIndex < images.length - 1) {
         setCurrentImageIndex(currentImageIndex + 1);
         setCapturedImage(null);
