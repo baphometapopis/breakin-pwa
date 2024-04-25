@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-html5-camera-photo/build/css/index.css";
 import { Camera } from "react-html5-camera-photo";
@@ -30,6 +30,7 @@ const CameraScreen = () => {
       if (currentImageIndex < images.length - 1) {
         setCurrentImageIndex(currentImageIndex + 1);
         setCapturedImage(null);
+        setIsModalOpen(true);
       } else {
         navigation("/ShowInspectionImages", {
           state: {
@@ -65,17 +66,18 @@ const CameraScreen = () => {
     },
   ];
 
+  useEffect(() => {}, [isModalOpen]);
   return (
     <div className="camera-container">
       {isModalOpen && (
         <div className="modal">
           <div style={{ flex: 0.4 }}>
             <img
-              src={images[currentImageIndex].sample_image_url}
-              alt={images[currentImageIndex].name}
+              src={images[currentImageIndex]?.sample_image_url}
+              alt={images[currentImageIndex]?.name}
               style={{ width: "100%", height: "80%" }}
             />
-            <p className="modalText">{images[currentImageIndex].name}</p>
+            <p className="modalText">{images[currentImageIndex]?.name}</p>
             <p className="modalText">
               {currentImageIndex + 1}/{images.length}
             </p>
@@ -108,7 +110,7 @@ const CameraScreen = () => {
           </div>
         </div>
       )}
-      {!isModalOpen && (
+      {!isModalOpen && !capturedImage && (
         <div>
           <Camera
             onTakePhoto={(dataUri) => handleTakePhoto(dataUri)}
@@ -123,6 +125,7 @@ const CameraScreen = () => {
       {capturedImage && (
         <div>
           <img src={capturedImage} alt="Captured" className="captured-image" />
+
           <div className="save-button-container">
             <button className="save-button" onClick={handleSavePhoto}>
               Save

@@ -44,7 +44,6 @@ const ShowinspectionImages = ({ route }) => {
             )} */}
             {console.log(item)}
             <img
-
               className="image"
               src={item?.images}
               alt={item?.imagename}
