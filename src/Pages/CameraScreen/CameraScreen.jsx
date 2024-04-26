@@ -34,16 +34,12 @@ const CameraScreen = () => {
 
   return (
     <div>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        style={{
-          maxWidth: "100%",
-          maxHeight: "100%",
-          width: "auto",
-          height: "auto",
-        }}
+    <input
+        accept="image/*"
+        id="icon-button-file"
+        type="file"
+        capture="environment"
+        style={{ display: "none" }} // Hide the input visually
       />
     </div>
   );
