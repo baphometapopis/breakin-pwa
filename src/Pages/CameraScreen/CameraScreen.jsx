@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 
 const CameraScreen = () => {
@@ -29,7 +30,7 @@ const CameraScreen = () => {
         });
       }
     };
-  }, []); // Empty dependency array ensures useEffect only runs once
+  }, []);
 
   return (
     <div>
