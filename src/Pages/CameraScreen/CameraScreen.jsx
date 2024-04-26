@@ -34,15 +34,26 @@ const CameraScreen = () => {
 
   return (
     <div>
-    <input
+      <input
         accept="image/*"
         id="icon-button-file"
         type="file"
         capture="environment"
-        style={{ display: "none" }} // Hide the input visually
+      />
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        style={{
+          maxWidth: "100%",
+          maxHeight: "100%",
+          width: "auto",
+          height: "auto",
+        }}
       />
     </div>
   );
+
 };
 
 export default CameraScreen;
