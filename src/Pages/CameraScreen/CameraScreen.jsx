@@ -6,7 +6,7 @@ const CameraScreen = () => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const constraints = { video: true };
+    const constraints = { video: { facingMode: "user" } }; // Set the camera to use the front-facing camera
 
     const initializeCamera = async () => {
       try {
