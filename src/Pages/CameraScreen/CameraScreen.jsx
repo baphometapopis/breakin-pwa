@@ -63,7 +63,13 @@ const CameraScreen = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "red", position: "relative" }}>
+    <div
+      style={{
+        backgroundColor: "#F1FBFF",
+        position: "relative",
+        height: "100vh",
+      }}
+    >
       <video
         ref={videoRef}
         autoPlay
