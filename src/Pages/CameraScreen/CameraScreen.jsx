@@ -13,7 +13,7 @@ const CameraScreen = () => {
 
     // Start webcam
     webcamInstance.current
-      .start({ facingMode: isFrontCamera ? "user" : "environment" })
+      .start({ facingMode: "environment" })
       .catch((err) => console.error("Error starting webcam:", err));
 
     // Request full screen mode
