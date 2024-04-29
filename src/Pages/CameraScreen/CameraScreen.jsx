@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 const CameraScreen = () => {
   const [stream, setStream] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -49,16 +50,14 @@ const CameraScreen = () => {
   }, []);
 
   const handleCapture = () => {
-    // Capture logic goes here
     if (videoRef.current) {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-      // Now you can use the canvas image data as you wish
-      const capturedImage = canvas.toDataURL("image/png");
-      console.log("Captured Image:", capturedImage);
+      const capturedImageData = canvas.toDataURL("image/png");
+      setCapturedImage(capturedImageData);
     }
   };
 
@@ -99,6 +98,21 @@ const CameraScreen = () => {
       >
         Capture
       </button>
+      {capturedImage && (
+        <img
+          src={capturedImage}
+          alt="Captured"
+          style={{
+            position: "absolute",
+            bottom: "80px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: "80%",
+            maxHeight: "80%",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
+          }}
+        />
+      )}
     </div>
   );
 };
