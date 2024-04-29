@@ -8,7 +8,7 @@ const CameraScreen = () => {
 
   useEffect(() => {
     // Initialize webcam instance
-    webcamInstance.current = new Webcam(webcamRef.current, "Environment");
+    webcamInstance.current = new Webcam(webcamRef.current);
 
     // Start webcam
     webcamInstance.current
