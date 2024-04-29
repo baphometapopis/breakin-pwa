@@ -8,7 +8,7 @@ const CameraScreen = () => {
 
   useEffect(() => {
     // Initialize webcam instance
-    webcamInstance.current = new Webcam(webcamRef.current);
+    webcamInstance.current = new Webcam(webcamRef.current, { video: { facingMode: "environment" } });
 
     // Start webcam
     webcamInstance.current
@@ -47,6 +47,7 @@ const CameraScreen = () => {
       <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
         <video
           ref={webcamRef}
+
           autoPlay
           playsInline
           style={{
