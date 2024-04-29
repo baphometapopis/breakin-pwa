@@ -3,6 +3,7 @@ import Webcam from "webcam-easy"; // Import Webcam from webcam-easy
 
 const CameraScreen = () => {
   const [capturedImage, setCapturedImage] = useState(null);
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
   const webcamRef = useRef(null);
   const webcamInstance = useRef(null);
 
@@ -12,7 +13,7 @@ const CameraScreen = () => {
 
     // Start webcam
     webcamInstance.current
-      .start()
+      .start({ facingMode: isFrontCamera ? "user" : "environment" })
       .catch((err) => console.error("Error starting webcam:", err));
 
     // Request full screen mode
@@ -27,12 +28,19 @@ const CameraScreen = () => {
         document.exitFullscreen();
       }
     };
-  }, []);
+  }, [isFrontCamera]);
 
   const handleCapture = () => {
     // Capture image from webcam
     const imageSrc = webcamInstance.current.snap();
     setCapturedImage(imageSrc);
+  };
+
+  const handleCameraFlip = () => {
+    // Flip the camera
+    webcamInstance.current.flip();
+    // Toggle the camera state
+    setIsFrontCamera((prev) => !prev);
   };
 
   return (
@@ -66,6 +74,17 @@ const CameraScreen = () => {
           }}
         >
           Capture
+        </button>
+        <button
+          onClick={handleCameraFlip}
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            zIndex: 1,
+          }}
+        >
+          Flip
         </button>
         {capturedImage && (
           <img
