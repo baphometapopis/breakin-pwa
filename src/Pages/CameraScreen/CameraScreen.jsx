@@ -48,8 +48,22 @@ const CameraScreen = () => {
     };
   }, []);
 
+  const handleCapture = () => {
+    // Capture logic goes here
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      // Now you can use the canvas image data as you wish
+      const capturedImage = canvas.toDataURL("image/png");
+      console.log("Captured Image:", capturedImage);
+    }
+  };
+
   return (
-    <div style={{ backgroundColor: "red" }}>
+    <div style={{ backgroundColor: "red", position: "relative" }}>
       <video
         ref={videoRef}
         autoPlay
@@ -61,6 +75,24 @@ const CameraScreen = () => {
           height: "auto",
         }}
       />
+      <button
+        onClick={handleCapture}
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "10px 20px",
+          fontSize: "16px",
+          borderRadius: "5px",
+          backgroundColor: "white",
+          color: "black",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Capture
+      </button>
     </div>
   );
 };
