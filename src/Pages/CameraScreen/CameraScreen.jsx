@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 
 const CameraScreen = () => {
@@ -29,7 +30,6 @@ const CameraScreen = () => {
         });
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Add event listener to handle orientation change
@@ -48,42 +48,17 @@ const CameraScreen = () => {
     };
   }, []);
 
-  // Function to toggle fullscreen mode
-  const toggleFullScreen = () => {
-    if (videoRef.current) {
-      if (!document.fullscreenElement) {
-        videoRef.current.requestFullscreen().catch((err) => {
-          console.error("Error attempting to enable full-screen mode:", err);
-        });
-      } else {
-        document.exitFullscreen();
-      }
-    }
-  };
-
   return (
-    <div
-      style={{
-        backgroundColor: "red",
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <div style={{ backgroundColor: "red" }}>
       <video
         ref={videoRef}
         autoPlay
         playsInline
-        onClick={toggleFullScreen}
         style={{
           maxWidth: "100%",
           maxHeight: "100%",
           width: "auto",
           height: "auto",
-          transform: "rotate(90deg)", // Rotate video to landscape mode
-          cursor: "pointer", // Add cursor pointer to indicate video can be clicked for fullscreen
         }}
       />
     </div>
