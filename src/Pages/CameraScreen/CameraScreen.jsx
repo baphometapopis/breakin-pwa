@@ -13,7 +13,7 @@ const CameraScreen = () => {
     const constraints = {
       audio: false,
       video: { width: HEIGHT, height: HEIGHT },
-      // FACING_MODES: "environment",
+      FACING_MODES: { exact: "environment" },
     };
 
     navigator.mediaDevices
