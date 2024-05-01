@@ -23,7 +23,6 @@ const CameraScreen = () => {
   const videoConstraints = {
     facingMode: { exact: "environment" }, // This will use the back camera if available
     // facingMode: 'user', // This will use the back camera if available
-
   };
 
   // const handleTakePhoto = (dataUri) => {
@@ -131,6 +130,8 @@ const CameraScreen = () => {
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
+            width={1250}
+            height={1250}
             videoConstraints={videoConstraints}
           />
         </div>
