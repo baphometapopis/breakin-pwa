@@ -8,6 +8,10 @@ import "react-html5-camera-photo/build/css/index.css";
 import "./CameraScreen.css"; // Import the CSS file
 
 const CameraScreen = () => {
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
   const [allCapturedImages, setAllCapturedImages] = useState([]);
@@ -79,6 +83,22 @@ const CameraScreen = () => {
         "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
     },
   ];
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    // Add event listener to window resize event
+    window.addEventListener("resize", handleResize);
+
+    // Remove event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
   useEffect(() => {}, [isModalOpen]);
   return (
@@ -130,8 +150,8 @@ const CameraScreen = () => {
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            width={1250}
-            height={1250}
+            width={windowSize.width}
+            height={windowSize.height}
             videoConstraints={videoConstraints}
           />
         </div>
