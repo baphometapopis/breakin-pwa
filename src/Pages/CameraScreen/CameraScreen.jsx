@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 import "react-html5-camera-photo/build/css/index.css";
 // import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
+import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 
 const CameraScreen = () => {
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [images, setImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
   const [allCapturedImages, setAllCapturedImages] = useState([]);
@@ -54,29 +56,35 @@ const CameraScreen = () => {
     }
   };
 
-  const images = [
-    {
-      id: "1",
-      name: "Odometer with Engine on Position",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/ODOMETER.jpeg",
-    },
-    {
-      id: "2",
-      name: "Windscreen Inside to Outside",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Inside-to-Outside.jpg",
-    },
-    {
-      id: "3",
-      name: "Windscreen Outside to Inside",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
-    },
-  ];
+  // const images = [
+  //   {
+  //     id: "1",
+  //     name: "Odometer with Engine on Position",
+  //     is_mand: "1",
+  //     sample_image_url:
+  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/ODOMETER.jpeg",
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Windscreen Inside to Outside",
+  //     is_mand: "1",
+  //     sample_image_url:
+  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Inside-to-Outside.jpg",
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Windscreen Outside to Inside",
+  //     is_mand: "1",
+  //     sample_image_url:
+  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
+  //   },
+  // ];
+  const fetchInspectionImages = async () => {
+    const imageRes = await fetch_Image_inspection_question();
+    console.log(imageRes.data);
+    setImages(imageRes.data);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -94,7 +102,10 @@ const CameraScreen = () => {
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen]);
+  useEffect(() => {}, [isModalOpen, images]);
+  useEffect(() => {
+    fetchInspectionImages();
+  }, []);
   return (
     <div className="camera-container">
       {isModalOpen && (
