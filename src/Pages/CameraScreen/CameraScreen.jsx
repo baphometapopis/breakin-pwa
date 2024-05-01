@@ -1,63 +1,93 @@
-import React, { useState } from "react";
-// import { FACING_MODES } from "react-html5-camera-photo";
-// import Webcam from "webcam-easy"; // Import Webcam from webcam-easy
+import React, { useRef, useCallback } from "react";
+import Webcam from "react-webcam";
 
-const CameraScreen = () => {
-  const [playing, setPlaying] = useState(false);
+const Camera = () => {
+  const webcamRef = useRef(null);
 
-  const HEIGHT = 300;
-  const WIDTH = 300;
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    console.log(imageSrc); // You can use this image source as you need
+  }, [webcamRef]);
 
-  const startVideo = () => {
-    setPlaying(true);
-    const constraints = {
-      audio: false,
-      video: { width: HEIGHT, height: HEIGHT },
-      FACING_MODES: { exact: "environment" },
-    };
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then((stream) => {
-        let video = document.getElementsByClassName("app__videoFeed")[0];
-        if (video) {
-          video.srcObject = stream;
-        }
-      })
-      .catch((error) => {
-        console.log("WTS WHYYYYYY", error);
-      });
-  };
-
-  const stopVideo = () => {
-    setPlaying(false);
-    let video = document.getElementsByClassName("app__videoFeed")[0];
-    video.srcObject.getTracks()[0].stop();
+  const videoConstraints = {
+    facingMode: { exact: "environment" }, // This will use the back camera if available
   };
 
   return (
-    <div className="app">
-      <div className="app__input">
-        {playing ? (
-          <button onClick={stopVideo}>Stop</button>
-        ) : (
-          <button onClick={startVideo}>Start</button>
-        )}
-      </div>
-      <div className="app__container">
-        <video
-          height={`${HEIGHT}px`}
-          width={`${WIDTH}px`}
-          // height={HEIGHT}
-          // width={WIDTH}
-          playsInline
-          autoPlay
-          style={{ objectFit: "fill" }}
-          className="app__videoFeed"
-        ></video>
-      </div>
-    </div>
+    <>
+      <Webcam
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
+        videoConstraints={videoConstraints}
+      />
+      <button onClick={capture}>Capture</button>
+    </>
   );
 };
 
-export default CameraScreen;
+export default Camera;
+
+// import React, { useState } from "react";
+// // import { FACING_MODES } from "react-html5-camera-photo";
+// // import Webcam from "webcam-easy"; // Import Webcam from webcam-easy
+
+// const CameraScreen = () => {
+//   const [playing, setPlaying] = useState(false);
+
+//   const HEIGHT = 300;
+//   const WIDTH = 300;
+
+//   const startVideo = () => {
+//     setPlaying(true);
+//     const constraints = {
+//       audio: false,
+//       video: { width: HEIGHT, height: HEIGHT },
+//       FACING_MODES: { exact: "environment" },
+//     };
+
+//     navigator.mediaDevices
+//       .getUserMedia(constraints)
+//       .then((stream) => {
+//         let video = document.getElementsByClassName("app__videoFeed")[0];
+//         if (video) {
+//           video.srcObject = stream;
+//         }
+//       })
+//       .catch((error) => {
+//         console.log("WTS WHYYYYYY", error);
+//       });
+//   };
+
+//   const stopVideo = () => {
+//     setPlaying(false);
+//     let video = document.getElementsByClassName("app__videoFeed")[0];
+//     video.srcObject.getTracks()[0].stop();
+//   };
+
+//   return (
+//     <div className="app">
+//       <div className="app__input">
+//         {playing ? (
+//           <button onClick={stopVideo}>Stop</button>
+//         ) : (
+//           <button onClick={startVideo}>Start</button>
+//         )}
+//       </div>
+//       <div className="app__container">
+//         <video
+//           height={`${HEIGHT}px`}
+//           width={`${WIDTH}px`}
+//           // height={HEIGHT}
+//           // width={WIDTH}
+//           playsInline
+//           autoPlay
+//           style={{ objectFit: "fill" }}
+//           className="app__videoFeed"
+//         ></video>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CameraScreen;
