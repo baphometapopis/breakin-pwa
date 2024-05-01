@@ -19,22 +19,16 @@ const CameraScreen = () => {
   const navigation = useNavigate();
   const webcamRef = useRef(null);
 
-  // const capture = useCallback(() => {
-  //   const imageSrc = webcamRef.current.getScreenshot();
-  //   console.log(imageSrc); // You can use this image source as you need
-  // }, [webcamRef]);
-
   const videoConstraints = {
-    facingMode: { exact: "environment" }, // This will use the back camera if available
-    // facingMode: 'user', // This will use the back camera if available
+    facingMode: { exact: "user" }, // This will use the back camera if available
   };
-
-  // const handleTakePhoto = (dataUri) => {
-  //   setCapturedImage(dataUri);
-  // };
 
   const handleRetakePhoto = () => {
     setCapturedImage(null);
+  };
+  const capture = () => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setCapturedImage(imageSrc);
   };
 
   const handleSavePhoto = () => {
@@ -154,6 +148,9 @@ const CameraScreen = () => {
             height={windowSize.height}
             videoConstraints={videoConstraints}
           />
+          <div className="capture-button-container">
+            <button onClick={capture}>Capture</button>
+          </div>{" "}
         </div>
       )}
       {capturedImage && (
