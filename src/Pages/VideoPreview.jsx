@@ -7,7 +7,7 @@ const VideoPreview = () => {
   };
   const { state } = useLocation();
   const { videoUri } = state;
-  console.log(state)
+  console.log(state);
 
   return (
     <div>
