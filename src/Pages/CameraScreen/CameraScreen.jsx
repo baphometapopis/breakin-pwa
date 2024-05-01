@@ -150,7 +150,7 @@ const CameraScreen = () => {
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            width={windowSize.width}
+            // width={windowSize.w}
             height={windowSize.height}
             videoConstraints={videoConstraints}
           />
