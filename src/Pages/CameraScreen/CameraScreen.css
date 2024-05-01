@@ -161,7 +161,7 @@
   }
   .capture-button-container {
     position: absolute;
-    top: 20px; /* Adjust top position as needed */
+    bottom: 20px; /* Adjust top position as needed */
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -169,4 +169,10 @@
   
   .action-buttons {
     margin-top: 10px;
+  }
+  .capture-button{
+    background-color: white;
+    height: 80px;
+    width: 80px;
+    border-radius: 50px;
   }

@@ -20,7 +20,7 @@ const CameraScreen = () => {
   const webcamRef = useRef(null);
 
   const videoConstraints = {
-    facingMode: { exact: "environment" }, // This will use the back camera if available
+    facingMode: { exact: "user" }, // This will use the back camera if available
   };
 
   const handleRetakePhoto = () => {
@@ -149,7 +149,7 @@ const CameraScreen = () => {
             videoConstraints={videoConstraints}
           />
           <div className="capture-button-container">
-            <button onClick={capture}>Capture</button>
+            <div onClick={capture} className="capture-button"></div>
           </div>{" "}
         </div>
       )}
