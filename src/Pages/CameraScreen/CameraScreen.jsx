@@ -146,6 +146,8 @@ const CameraScreen = () => {
             screenshotFormat="image/jpeg"
             // width={windowSize.w}
             height={windowSize.height}
+            mirrored={true}
+            allowFullScreen={true}
             videoConstraints={videoConstraints}
           />
           <div className="capture-button-container">
