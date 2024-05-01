@@ -20,7 +20,7 @@ const CameraScreen = () => {
   const webcamRef = useRef(null);
 
   const videoConstraints = {
-    facingMode: { exact: "user" }, // This will use the back camera if available
+    facingMode: { exact: "environment" }, // This will use the back camera if available
   };
 
   const handleRetakePhoto = () => {
