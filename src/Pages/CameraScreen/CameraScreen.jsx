@@ -1,10 +1,10 @@
 // import React, { useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-html5-camera-photo/build/css/index.css";
-import { Camera } from "react-html5-camera-photo";
+// import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
 
 const CameraScreen = () => {
@@ -15,18 +15,18 @@ const CameraScreen = () => {
   const navigation = useNavigate();
   const webcamRef = useRef(null);
 
-  const capture = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    console.log(imageSrc); // You can use this image source as you need
-  }, [webcamRef]);
+  // const capture = useCallback(() => {
+  //   const imageSrc = webcamRef.current.getScreenshot();
+  //   console.log(imageSrc); // You can use this image source as you need
+  // }, [webcamRef]);
 
   const videoConstraints = {
     facingMode: { exact: "environment" }, // This will use the back camera if available
   };
 
-  const handleTakePhoto = (dataUri) => {
-    setCapturedImage(dataUri);
-  };
+  // const handleTakePhoto = (dataUri) => {
+  //   setCapturedImage(dataUri);
+  // };
 
   const handleRetakePhoto = () => {
     setCapturedImage(null);
