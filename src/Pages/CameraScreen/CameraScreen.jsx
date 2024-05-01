@@ -9,6 +9,8 @@ import "./CameraScreen.css"; // Import the CSS file
 
 const CameraScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [videoConstraints, setVideoConstraints] = useState({});
+
   const [capturedImage, setCapturedImage] = useState(null);
   const [allCapturedImages, setAllCapturedImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -20,10 +22,12 @@ const CameraScreen = () => {
   //   console.log(imageSrc); // You can use this image source as you need
   // }, [webcamRef]);
 
-  const videoConstraints = {
-    facingMode: { exact: "environment" }, // This will use the back camera if available
-    // facingMode: "user", // This will use the back camera if available
-  };
+  // const videoConstraints = {
+  //   width: 1580,
+  //   height: 1300,
+  //   facingMode: { exact: "user" }, // This will use the back camera if available
+  //   // facingMode: "user", // This will use the back camera if available
+  // };
 
   // const handleTakePhoto = (dataUri) => {
   //   setCapturedImage(dataUri);
@@ -79,7 +83,35 @@ const CameraScreen = () => {
         "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
     },
   ];
+  const getScreenDimensions = async () => {
+    return new Promise((resolve, reject) => {
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth &&
+        window.innerHeight
+      ) {
+        resolve({ width: window.innerWidth, height: window.innerHeight });
+      } else {
+        reject(new Error("Could not get screen dimensions"));
+      }
+    });
+  };
+  useEffect(() => {
+    console.log(videoConstraints);
+    const setConstraints = async () => {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const { width, height } = await getScreenDimensions();
+        setVideoConstraints({
+          width: width,
+          height: height,
+          // facingMode: "user", // Use front camera if available
+          facingMode: { exact: "environment" }, // This will use the back camera if available
+        });
+      }
+    };
 
+    setConstraints();
+  }, []);
   useEffect(() => {}, [isModalOpen]);
   return (
     <div className="camera-container">
