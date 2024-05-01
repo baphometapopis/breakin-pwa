@@ -111,6 +111,7 @@ const CameraScreen = () => {
     };
 
     setConstraints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {}, [isModalOpen]);
   return (
