@@ -4,7 +4,9 @@ import Webcam from "react-webcam";
 
 const VideoRecorder = () => {
   const webcamRef = useRef(null);
-
+  const videoConstraints = {
+    facingMode: { exact: "environment" }, // This will use the back camera if available
+  };
   useEffect(() => {
     const lockOrientation = async () => {
       try {
@@ -60,9 +62,7 @@ const VideoRecorder = () => {
             screenshotQuality={0.9}
             width="100%"
             className="camera-video"
-            videoConstraints={{
-              facingMode: "environment", // Use 'user' for front camera, 'environment' for rear camera
-            }}
+            videoConstraints={videoConstraints}
           />
           {/* <button className="camera-button" onClick={handleCapture}>
             Capture
