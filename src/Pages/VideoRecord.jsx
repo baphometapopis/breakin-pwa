@@ -1,73 +1,73 @@
-/* eslint-disable no-restricted-globals */
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
+// import "./VideoCapture.css"; // Import the CSS file
 
 const VideoRecorder = () => {
   const webcamRef = useRef(null);
+  const [capturing, setCapturing] = useState(false);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const mediaRecorderRef = useRef(null);
+
   const videoConstraints = {
     facingMode: { exact: "environment" }, // This will use the back camera if available
   };
-  useEffect(() => {
-    const lockOrientation = async () => {
-      try {
-        // Check if the screen orientation API is available
-        if (screen.orientation) {
-          // Check if the document is in fullscreen mode
-          if (document.fullscreenElement) {
-            // Attempt to lock the screen orientation to landscape
-            await screen.orientation.lock("landscape");
-            console.log("Orientation locked successfully.");
-          } else {
-            console.log("Page needs to be fullscreen.");
-          }
-        } else {
-          console.log("Screen orientation API not available.");
-        }
-      } catch (error) {
-        console.error("Failed to lock orientation:", error.message);
-      }
-    };
+  const startVideoCapture = () => {
+    setCapturing(true);
+    const stream = webcamRef.current.video.srcObject;
+    const options = { mimeType: "video/webm" };
+    mediaRecorderRef.current = new MediaRecorder(stream, options);
+    mediaRecorderRef.current.ondataavailable = handleDataAvailable;
+    mediaRecorderRef.current.start();
+  };
 
-    lockOrientation();
+  const stopVideoCapture = () => {
+    setCapturing(false);
+    mediaRecorderRef.current.stop();
+  };
 
-    // Cleanup function to unlock the orientation when component unmounts
-    return () => {
-      if (screen.orientation) {
-        // Unlock the screen orientation
-        screen.orientation.unlock();
-        console.log("Orientation unlocked.");
-      }
-    };
-  }, []);
-
-  const handleFullscreen = () => {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen().catch((err) => {
-        console.log("Failed to enter fullscreen:", err.message);
-      });
+  const handleDataAvailable = ({ data }) => {
+    if (data.size > 0) {
+      setRecordedChunks((prev) => [...prev, data]);
     }
   };
 
+  const downloadVideo = () => {
+    const blob = new Blob(recordedChunks, {
+      type: "video/webm",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = "react-webcam-video.webm";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="camera-container">
-      <div style={{ padding: "10px" }}>
-        <button onClick={handleFullscreen}>Fullscreen</button>
-        <div>
+    <div className="video-capture-container">
+      <div className="video-container">
+        {capturing && (
           <Webcam
+            audio={true}
             ref={webcamRef}
-            audio={false}
-            mirrored={true}
-            screenshotFormat="image/webp"
-            screenshotQuality={0.9}
-            width="100%"
-            className="camera-video"
+            screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
+            className="video-element"
           />
-          {/* <button className="camera-button" onClick={handleCapture}>
-            Capture
-          </button> */}
-        </div>
+        )}
+      </div>
+      <div className="video-controls">
+        {!capturing && (
+          <button onClick={startVideoCapture}>Start Video Capture</button>
+        )}
+        {capturing && (
+          <button onClick={stopVideoCapture}>Stop Video Capture</button>
+        )}
+        {recordedChunks.length > 0 && (
+          <button onClick={downloadVideo}>Download Video</button>
+        )}
       </div>
     </div>
   );

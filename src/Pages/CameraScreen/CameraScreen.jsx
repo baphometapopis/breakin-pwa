@@ -56,29 +56,6 @@ const CameraScreen = () => {
     }
   };
 
-  // const images = [
-  //   {
-  //     id: "1",
-  //     name: "Odometer with Engine on Position",
-  //     is_mand: "1",
-  //     sample_image_url:
-  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/ODOMETER.jpeg",
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "Windscreen Inside to Outside",
-  //     is_mand: "1",
-  //     sample_image_url:
-  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Inside-to-Outside.jpg",
-  //   },
-  //   {
-  //     id: "3",
-  //     name: "Windscreen Outside to Inside",
-  //     is_mand: "1",
-  //     sample_image_url:
-  //       "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
-  //   },
-  // ];
   const fetchInspectionImages = async () => {
     const imageRes = await fetch_Image_inspection_question();
     console.log(imageRes.data);
