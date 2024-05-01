@@ -3,7 +3,7 @@ import Webcam from "react-webcam";
 
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-html5-camera-photo/build/css/index.css";
+// import "react-html5-camera-photo/build/css/index.css";
 // import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
 
@@ -22,6 +22,7 @@ const CameraScreen = () => {
 
   const videoConstraints = {
     facingMode: { exact: "environment" }, // This will use the back camera if available
+    // facingMode: "user", // This will use the back camera if available
   };
 
   // const handleTakePhoto = (dataUri) => {
@@ -130,6 +131,7 @@ const CameraScreen = () => {
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={videoConstraints}
+            mirrored={true}
           />
         </div>
       )}
