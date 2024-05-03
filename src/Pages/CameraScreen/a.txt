@@ -12,7 +12,7 @@ const CameraScreen = () => {
   const navigation = useNavigate();
 
   const handleTakePhoto = (dataUri) => {
-    setCapturedImage(dataUri);
+    setCapturedImage(d ataUri);
   };
 
   const handleRetakePhoto = () => {
