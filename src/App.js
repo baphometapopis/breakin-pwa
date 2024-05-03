@@ -6,6 +6,7 @@ import ProposalInfoPage from "./Pages/ProposalInfoPage/ProposalInfoPage";
 import ShowinspectionImages from "./Pages/ShowMandatoryInspectionimages/ShowMandatoryInspectionimages";
 import VideoRecorder from "./Pages/VideoRecord";
 import VideoPreview from "./Pages/VideoPreview";
+import InspectionCheckpoint from "./Pages/InspectionCheckpoint/InspectionCheckpoint";
 
 function App() {
   return (
@@ -15,6 +16,10 @@ function App() {
         <Route
           path="/proposal-info/:proposalNumber"
           element={<ProposalInfoPage />}
+        />
+        <Route
+          path="/InspectionCheckpoint"
+          element={<InspectionCheckpoint />}
         />
         <Route path="/camera" element={<CameraScreen />} />
         <Route
