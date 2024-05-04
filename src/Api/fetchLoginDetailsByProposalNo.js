@@ -29,7 +29,6 @@ export const fetchLoginDataByProposalNoAPi = async data => {
       return response.status;
     }
     const datas = await response.json();
-    console.log(response);
 
     return datas;
   } catch (error) {

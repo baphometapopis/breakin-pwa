@@ -7,6 +7,7 @@ import { CallIcon, StartInspection } from "../../Constant/ImageConstant";
 import { fetchProposalDetails } from "../../Api/fetchProposalDetails";
 import { url } from "../../Api/ApiEndpoint";
 import { fetchLoginDataByProposalNoAPi } from "../../Api/fetchLoginDetailsByProposalNo";
+import {  storeDataLocalStorage } from "../../Utils/LocalStorage";
 
 export const ProposalInfoPage = ({ route }) => {
   const { proposalNumber } = useParams(); //extract proposal number
@@ -28,6 +29,7 @@ export const ProposalInfoPage = ({ route }) => {
       const getData = await fetchProposalDetails(proposaldata?.proposal_id);
       if (getData.status) {
         setProposalInfo(getData?.data);
+        storeDataLocalStorage('Claim_proposalDetails',getData?.data)
       } else {
         // setisErrorVisible(true);
       }
@@ -47,6 +49,8 @@ export const ProposalInfoPage = ({ route }) => {
       setIsProposalExist(true);
       setProposalStatusData(response?.pos_login_data);
       fetchData(response.pos_login_data?.proposal_data);
+      storeDataLocalStorage('Claim_loginDetails',response)
+
     }
   }, [proposalNumber, setIsProposalExist, setProposalStatusData, fetchData]);
 
@@ -179,7 +183,7 @@ export const ProposalInfoPage = ({ route }) => {
                 "referBack") && (
               <button
                 className={"StartInspection"}
-                onClick={() => navigate("camera")}
+                onClick={() => navigate("/InspectionCheckpoint")}
               >
                 <img src={StartInspection} alt="Start Inspection Icon" />
                 <span>Start Inspection</span>
