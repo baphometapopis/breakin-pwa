@@ -1,269 +1,168 @@
-import React, { useEffect, useState } from "react";
+// In VideoRecorder.js
+/* eslint-disable */
+
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-html5-camera-photo/build/css/index.css";
-import { Camera } from "react-html5-camera-photo";
-import "./CameraScreen.css"; // Import the CSS file
+import Webcam from "react-webcam";
+import './VideoRecorder.css'
 
-const CameraScreen = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [allCapturedImages, setAllCapturedImages] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const VideoRecorder = () => {
+  const webcamRef = useRef(null);
+  const [capturing, setCapturing] = useState(false);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const mediaRecorderRef = useRef(null);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const navigation = useNavigate();
+  const videoConstraints = {
+    facingMode: 'user',
+    // facingMode: { exact: "environment" }, // This will use the back camera if available
 
-  const handleTakePhoto = (dataUri) => {
-    setCapturedImage(d ataUri);
   };
 
-  const handleRetakePhoto = () => {
-    setCapturedImage(null);
+  const MAX_VIDEO_DURATION = 90; // Maximum video duration in seconds (1 minute and 30 seconds)
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  useEffect(() => {
+    let timerId;
+    if (capturing) {
+      timerId = setInterval(() => {
+        setElapsedTime((prev) => prev + 1);
+      }, 1000); // Update elapsed time every second
+    } else {
+      clearInterval(timerId);
+      setElapsedTime(0); // Reset elapsed time when capturing stops
+    }
+
+    return () => clearInterval(timerId); // Cleanup timer on component unmount or when capturing stops
+  }, [capturing]);
+
+  const startVideoCapture = () => {
+    console.log('clicked')
+    setCapturing(true);
+    const stream = webcamRef.current.video.srcObject;
+    if (stream) {
+      const videoTrack = stream.getVideoTracks()[0];
+      const options = { mimeType: "video/webm" };
+      mediaRecorderRef.current = new MediaRecorder(stream, options);
+      mediaRecorderRef.current.ondataavailable = handleDataAvailable;
+      mediaRecorderRef.current.start();
+    }
+
+    // Automatically stop video capture after maximum duration
+    setTimeout(stopVideoCapture, MAX_VIDEO_DURATION * 1000);
   };
 
-  const handleSavePhoto = () => {
-    if (capturedImage) {
-      const data = {
-        images: capturedImage,
-        imagename: images[currentImageIndex]?.name,
-      };
-      setAllCapturedImages([...allCapturedImages, data]);
+// Inside the stopVideoCapture function
 
-      if (currentImageIndex < images.length - 1) {
-        setCurrentImageIndex(currentImageIndex + 1);
-        setCapturedImage(null);
-        setIsModalOpen(true);
-      } else {
-        navigation("/ShowInspectionImages", {
-          state: {
-            capturedImagesWithOverlay: allCapturedImages,
-            proposalInfo: "info",
-          },
-        });
-      }
+ const stopVideoCapture = () => {
+    mediaRecorderRef.current.stop();
+    setCapturing(false);
+    
+    if (recordedChunks.length) {
+      const blob = new Blob(recordedChunks, {
+        type: "video/webm"
+      });
+      const videoUri = URL.createObjectURL(blob);
+      navigation("/VideoPreview", {
+    state: {
+      videoUri: videoUri,
+      proposalInfo: "info",
+    },
+  });
     }
   };
 
-  const images = [
-    {
-      id: "1",
-      name: "Odometer with Engine on Position",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/ODOMETER.jpeg",
+
+const stopVideoCapture = () => {
+  console.log('Recording stopped');
+  setCapturing(false);
+  if (mediaRecorderRef.current) {
+    mediaRecorderRef.current.stop();
+  }
+  console.log("Recorded Chunks:", recordedChunks); // Log recordedChunks
+  const blob = new Blob(recordedChunks, {
+    type: "video/webm",
+  });
+  console.log("Blob Size:", blob.size); // Log blob size
+  const url = URL.createObjectURL(blob);
+  console.log("Blob URL:", url); // Log blob URL
+  navigation("/VideoPreview", {
+    state: {
+      videoUri: blob,
+      proposalInfo: "info",
     },
-    {
-      id: "2",
-      name: "Windscreen Inside to Outside",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Inside-to-Outside.jpg",
-    },
-    {
-      id: "3",
-      name: "Windscreen Outside to Inside",
-      is_mand: "1",
-      sample_image_url:
-        "https://bp.mypolicynow.com/api/images/breakin_sample_image/Windscreen-Outside-to-Inside.jpg",
-    },
-  ];
-
-  useEffect(() => {}, [isModalOpen]);
-  return (
-    <div className="camera-container">
-      {isModalOpen && (
-        <div className="modal">
-          <div style={{ flex: 0.4 }}>
-            <img
-              src={images[currentImageIndex]?.sample_image_url}
-              alt={images[currentImageIndex]?.name}
-              style={{ width: "100%", height: "80%" }}
-            />
-            <p className="modalText">{images[currentImageIndex]?.name}</p>
-            <p className="modalText">
-              {currentImageIndex + 1}/{images.length}
-            </p>
-          </div>
-          <div style={{ flex: 0.6 }}>
-            <h5 className="modalText">
-              Please follow the instructions to capture Image
-            </h5>
-
-            <p className="instructionText">
-              {"\u2022"} The Image has to be captured during the daylight. Image
-              captured in basements or shades (ex. tree shades) will not be
-              valid.
-            </p>
-            <p className="instructionText">
-              {"\u2022"} Please keep your car Turned ON for 10 seconds and then
-              Start Taking Images
-            </p>
-            <p className="instructionText">
-              {"\u2022"} A Reference Image is placed in the Middle of the Camera
-              while capturing Image
-            </p>
-            <p className="instructionText">
-              {"\u2022"} Click on Ok When Your are Ready
-            </p>
-
-            <div onClick={() => setIsModalOpen(false)} className="ok-button">
-              Start Camera
-            </div>
-          </div>
-        </div>
-      )}
-      {!isModalOpen && !capturedImage && (
-        <div>
-          <Camera
-            onTakePhoto={(dataUri) => handleTakePhoto(dataUri)}
-            idealFacingMode="environment"
-            isMaxResolution={true}
-            imageType="jpg"
-            isFullscreen={true}
-            imageCompression={0.97}
-            isImageMirror={true}
-          />
-        </div>
-      )}
-      {capturedImage && (
-        <div>
-          <img src={capturedImage} alt="Captured" className="captured-image" />
-
-          <div className="save-button-container">
-            <button className="save-button" onClick={handleSavePhoto}>
-              Save
-            </button>
-            <button className="retake-button" onClick={handleRetakePhoto}>
-              Retake
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  });
 };
 
-export default CameraScreen;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useState, useEffect, useRef } from "react";
-import Webcam from "webcam-easy"; // Import Webcam from webcam-easy
-
-const CameraScreen = () => {
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [isFrontCamera, setIsFrontCamera] = useState(true);
-  const webcamRef = useRef(null);
-  const webcamInstance = useRef(null);
-
-  useEffect(() => {
-    // Initialize webcam instance
-    webcamInstance.current = new Webcam(webcamRef.current);
-
-    // Start webcam
-    webcamInstance.current
-      .start({ facingMode: "environment" })
-      .catch((err) => console.error("Error starting webcam:", err));
-
-    // Request full screen mode
-    document.documentElement.requestFullscreen();
-
-    return () => {
-      // Cleanup webcam
-      webcamInstance.current.stop();
-
-      // Exit full screen mode when component unmounts
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      }
-    };
-  }, [isFrontCamera]);
-
-  const handleCapture = () => {
-    // Capture image from webcam
-    const imageSrc = webcamInstance.current.snap();
-    setCapturedImage(imageSrc);
+  const handleDataAvailable = ({ data }) => {
+    console.log(data,'handle data available ')
+    if (data.size > 0) {
+      setRecordedChunks((prev) => [...prev, data]);
+    }
   };
 
-  const handleCameraFlip = () => {
-    // Flip the camera
-    webcamInstance.current.flip();
-    // Toggle the camera state
-    setIsFrontCamera((prev) => !prev);
+  const downloadVideo = () => {
+    const blob = new Blob(recordedChunks, {
+      type: "video/webm",
+    });
+    const url = URL.createObjectURL(blob);
+    navigation("/VideoPreview", {
+      state: {
+        videoUri: url,
+        proposalInfo: "info",
+      },
+    });
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  useEffect(()=>{},[capturing])
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
-        <video
+    <div className="camera-container">
+      <div>
+        <Webcam
+          audio={false}
           ref={webcamRef}
-          autoPlay
-          playsInline
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          screenshotFormat="image/jpeg"
+          height={windowSize.height}
+          videoConstraints={videoConstraints}
         />
-        <button
-          onClick={handleCapture}
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1,
-          }}
-        >
-          Capture
-        </button>
-        <button
-          onClick={handleCameraFlip}
-          style={{
-            position: "absolute",
-            top: "20px",
-            right: "20px",
-            zIndex: 1,
-          }}
-        >
-          Flip
-        </button>
-        {capturedImage && (
-          <img  
-            src={capturedImage}
-            alt="Captured"
-            style={{
-              position: "absolute",
-              top: "20px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              maxWidth: "100%",
-              zIndex: 1,
-            }}
-          />
-        )}
+        {<div className="capture-button-container">
+
+       {!capturing ?  <div onClick={startVideoCapture} className="capture-button"></div>:
+          <div onClick={stopVideoCapture} className="video-duration">
+            <div onClick={startVideoCapture} className="capture-button">
+              <div className="stop-rec"/>
+            </div>
+           <p className="duration-timer">  {formatTime(elapsedTime)} / {formatTime(MAX_VIDEO_DURATION)}</p>
+          </div>}
+        </div>}
       </div>
     </div>
   );
 };
 
-export default CameraScreen;
-
+export default VideoRecorder;
