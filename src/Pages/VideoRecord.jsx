@@ -1,4 +1,6 @@
-import React, { useRef, useState } from "react";
+/* eslint-disable */
+
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 
@@ -7,26 +9,38 @@ const VideoRecorder = () => {
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const mediaRecorderRef = useRef(null);
-
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const navigation = useNavigate();
   const videoConstraints = {
     facingMode: { exact: "environment" }, // This will use the back camera if available
+    // facingMode: 'user', // This will use the back camera if available
+
   };
 
   const startVideoCapture = () => {
     setCapturing(true);
     const stream = webcamRef.current.video.srcObject;
-    const options = { mimeType: "video/webm" };
-    mediaRecorderRef.current = new MediaRecorder(stream, options);
-    mediaRecorderRef.current.ondataavailable = handleDataAvailable;
-    mediaRecorderRef.current.start();
+    if (stream) {
+      const videoTrack = stream.getVideoTracks()[0];
+      const options = { mimeType: "video/webm" };
+      mediaRecorderRef.current = new MediaRecorder(stream, options);
+      mediaRecorderRef.current.ondataavailable = handleDataAvailable;
+      mediaRecorderRef.current.start();
+    }
   };
+  
+  
 
   const stopVideoCapture = () => {
     setCapturing(false);
-    mediaRecorderRef.current.stop();
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+    }
   };
-
+  
   const handleDataAvailable = ({ data }) => {
     if (data.size > 0) {
       setRecordedChunks((prev) => [...prev, data]);
@@ -55,27 +69,41 @@ const VideoRecorder = () => {
     // window.URL.revokeObjectURL(url);
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    // Add event listener to window resize event
+    window.addEventListener("resize", handleResize);
+
+    // Remove event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Empty dependency array ensures that effect only runs on mount and unmount
+
   return (
-    <div className="video-capture-container">
-      <div className="video-container">
-        <Webcam
-          audio={true}
-          ref={webcamRef}
-          screenshotFormat="image/jpeg"
-          videoConstraints={videoConstraints}
-          className="video-element"
-        />
-      </div>
-      <div className="video-controls">
-        {!capturing ? (
-          <button onClick={startVideoCapture}>Start Video Capture</button>
-        ) : (
-          <button onClick={stopVideoCapture}>Stop Video Capture</button>
-        )}
-        {recordedChunks.length > 0 && (
-          <button onClick={downloadVideo}>Download Video</button>
-        )}
-      </div>
+    
+    <div className="camera-container">
+    
+        <div>
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            // width={windowSize.w}
+            height={windowSize.height}
+            videoConstraints={videoConstraints}
+          />
+          <div className="capture-button-container">
+            <div onClick={startVideoCapture} className="capture-button"></div>
+          </div>
+        </div>
+ 
     </div>
   );
 };

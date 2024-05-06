@@ -1,26 +1,149 @@
+/* eslint-disable */
+
 import React, { useEffect, useState } from "react";
 import "./ShowMandatoryInspectionimages.css"; // Import your CSS file
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { convertImageToBase64 } from "../../Utils/convertImageToBase64";
+import { submit_inspection_Images } from "../../Api/submitInspectionQuestion";
+import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 
 const ShowinspectionImages = ({ route }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isRequestDone,setIsRequestDone]=useState(false)
+  const [CurrentQuestion,setcurrentQuestion]=useState('');
+  const [SubmittedQuestions,setSubmittedQuestions]=useState('');
+  const [SubmittedImages,setsubmittedImages]=useState('');
+  const [FailedArray,setFailedArray]=useState('');
+  const [RequestDone,setRequestDone]=useState('');
+  const [fetchedQuestion,setFetchedQuestion]=useState('');
+  const [localdata, setLocaldata] = useState(null);
+
+
+
+
+
 
   const [isLoading, setIsLoading] = useState(false);
-
+const navigate =useNavigate()
   const { state } = useLocation();
-  const { capturedImagesWithOverlay } = state;
+  const { capturedImagesWithOverlay,proposalInfo } = state;
 
   console.log(state);
 
   const handleSubmit = () => {
-    setIsLoading(true); // Simulate loading
-
-    // Simulate submission success
-    setTimeout(() => {
-      setIsLoading(false);
-      //   setRequestDone(true);
-    }, 2000);
+    // setIsSubmitted(false); // Reset submitted state
+    if (true) {
+      navigate('/VideoRecord', {
+        proposalInfo: proposalInfo,
+      });
+    } 
+    else
+{
+      FilterImages();
+    }
   };
+
+  async function submitQuestions(questionDataList) {
+    const sortedList = questionDataList.sort((a, b) => {
+      const questionIdA = parseInt(a.question_id, 10);
+      const questionIdB = parseInt(b.question_id, 10);
+      if (questionIdA < questionIdB) {
+        return -1;
+      } else if (questionIdA > questionIdB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    setIsLoading(true);
+    const failedSubmissionsArray = [];
+    const questiondone = [];
+    const questiondoneImages = [];
+  
+    try {
+      for (const questionData of sortedList) {
+        let data = {
+          break_in_case_id: questionData?.break_in_case_id,
+          question_id: questionData?.question_id,
+          pos_id: questionData?.pos_id,
+          proposal_list_id: questionData?.proposal_list_id,
+          ic_id: questionData?.ic_id,
+          answer_id: questionData?.answer_id,
+          inspection_type: questionData?.inspection_type,
+          part: questionData?.part,
+        };
+        try {
+          const submittedresponse = await submit_inspection_Images(
+            data,
+            'From Submit Function',
+          );
+          if (submittedresponse?.status) {
+            setcurrentQuestion(questionData?.question_id);
+            console.log(
+              `Question ${questionData?.question_id} submitted successfully`,
+            );
+            questiondone.push(Number(questionData?.question_id));
+            questiondoneImages.push(questionData?.part);
+            console.log(
+              questionData?.part,
+              'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+            );
+            setcurrentQuestion(data?.question_id)
+          } else {
+          }
+        } catch (error) {
+          console.error(
+            `Error submitting question ${questionData?.question_id}: ${error.message}`,
+          );
+        }
+        // Add delay of 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      setsubmittedImages(questiondoneImages);
+      setSubmittedQuestions(questiondone);
+    } catch (error) {
+      console.log(`Error submitting questions: ${error.message}`);
+    }
+    setIsLoading(false);
+    setFailedArray(failedSubmissionsArray);
+    setRequestDone(true);
+  }
+  
+
+   const fetchInspectionImages = async () => {
+    if (localdata && proposalInfo) {
+      setLocaldata(localdata?.pos_login_data)
+    }
+
+    const imageRes = await fetch_Image_inspection_question();
+    console.log(imageRes.data);
+    setFetchedQuestion(imageRes.data);
+  };
+  async function FilterImages() {
+    const sendPOSTDATA = [];
+    for (const questionId of fetchedQuestion) {
+      capturedImagesWithOverlay.map(async image => {
+        // console.log(questionId.name, image);
+        if (image.part === questionId.name) {
+          let data = {
+            break_in_case_id: proposalInfo?.break_in_case_id,
+            question_id: questionId?.id,
+            pos_id: localdata?.pos_login_data?.id,
+            proposal_list_id: proposalInfo?.id,
+            ic_id: proposalInfo?.ic_id,
+            answer_id: image?.uri,
+            part: image.part,
+            inspection_type: proposalInfo?.inspection_type,
+          };
+
+          sendPOSTDATA.push(data);
+        }
+      });
+    }
+    submitQuestions(sendPOSTDATA);
+  }
+
+
 
   const handleImagePress = (uri) => {
     setSelectedImage(uri);
@@ -31,8 +154,8 @@ const ShowinspectionImages = ({ route }) => {
   };
 
   useEffect(() => {
-    // Fetch data here if needed
-  }, []);
+    fetchInspectionImages()  }, []);
+    useEffect(()=>{},[CurrentQuestion])
 
   return (
     <div className="container1">
@@ -42,12 +165,11 @@ const ShowinspectionImages = ({ route }) => {
             {/* {submittedImages.includes(item.part) && (
               <img className="checkIcon" src={IconCheck} alt="Check Icon" />
             )} */}
-            {console.log(item)}
             <img
               className="image"
-              src={item?.images}
-              alt={item?.imagename}
-              onClick={() => handleImagePress(item.images)}
+              src={item?.uri}
+              alt={item?.part}
+              onClick={() => handleImagePress(item.uri)}
             />
             <p className="overlayText">{item?.imagename}</p>
           </div>
@@ -63,7 +185,7 @@ const ShowinspectionImages = ({ route }) => {
       {isLoading && (
         <div className="loaderContainer">
           <div className="loader"></div>
-          <p className="loaderText">Submitting Question</p>
+          <p className="loaderText">{`${CurrentQuestion}/${capturedImagesWithOverlay.length+1} Submitting Question`}</p>
         </div>
       )}
       {selectedImage && (

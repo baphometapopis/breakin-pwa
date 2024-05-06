@@ -1,19 +1,24 @@
+/* eslint-disable */
 // import React, { useRef, useCallback } from "react";
 import Webcam from "react-webcam";
-
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-html5-camera-photo/build/css/index.css";
 // import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
+import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 
 const CameraScreen = () => {
+
+
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
   const [images, setImages] = useState([]);
+  const [ProposalInfo, setProposalInfo] = useState([]);
+
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
   const [allCapturedImages, setAllCapturedImages] = useState([]);
@@ -22,8 +27,10 @@ const CameraScreen = () => {
   const webcamRef = useRef(null);
 
   const videoConstraints = {
-    // facingMode: { exact: "environment" }, // This will use the back camera if available
+    // facingMode: 'user', // This will use the back camera if available
+
     facingMode: { exact: "environment" }, // This will use the back camera if available
+    // facingMode: { exact: "environment" }, // This will use the back camera if available
 
   };
 
@@ -37,11 +44,26 @@ const CameraScreen = () => {
 
   const handleSavePhoto = () => {
     if (capturedImage) {
-      const data = {
-        images: capturedImage,
-        imagename: images[currentImageIndex]?.name,
+      const overlayText = images[currentImageIndex]?.name;
+      const overlayTextid = images[currentImageIndex]?.id;
+  
+      const timestamp = new Date().getTime();
+      const fileName = `${images[currentImageIndex]?.name}.jpg`;
+      const fileData = {
+        uri: capturedImage, // Use the last captured image URI
+        type: 'image/jpeg',
+        name: fileName,
+        part: overlayText,
+        image_id: overlayTextid,
       };
-      setAllCapturedImages([...allCapturedImages, data]);
+      // const data = {
+      //   images: capturedImage,
+      //   imagename: images[currentImageIndex]?.name,
+      // };
+
+      console.log(fileData)
+
+      setAllCapturedImages([...allCapturedImages, fileData]);
 
       if (currentImageIndex < images.length - 1) {
         setCurrentImageIndex(currentImageIndex + 1);
@@ -51,7 +73,7 @@ const CameraScreen = () => {
         navigation("/ShowInspectionImages", {
           state: {
             capturedImagesWithOverlay: allCapturedImages,
-            proposalInfo: "info",
+            proposalInfo: ProposalInfo,
           },
         });
       }
@@ -59,6 +81,11 @@ const CameraScreen = () => {
   };
 
   const fetchInspectionImages = async () => {
+    const ProposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
+    setProposalInfo(ProposalInfo)
+
+
+
     const imageRes = await fetch_Image_inspection_question();
     console.log(imageRes.data);
     setImages(imageRes.data);
@@ -81,7 +108,7 @@ const CameraScreen = () => {
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen, images]);
+  useEffect(() => {}, [isModalOpen, images,ProposalInfo]);
   useEffect(() => {
     fetchInspectionImages();
   }, []);
@@ -121,7 +148,6 @@ const CameraScreen = () => {
             <p className="instructionText">
               {"\u2022"} Click on Ok When Your are Ready
             </p>
-
             <div onClick={() => setIsModalOpen(false)} className="ok-button">
               Start Camera
             </div>
@@ -140,7 +166,7 @@ const CameraScreen = () => {
           />
           <div className="capture-button-container">
             <div onClick={capture} className="capture-button"></div>
-          </div>{" "}
+          </div>
         </div>
       )}
       {capturedImage && (
