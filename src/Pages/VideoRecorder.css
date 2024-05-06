@@ -175,4 +175,20 @@
   height: 80px;
   width: 80px;
   border-radius: 50px;
+  position: relative;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stop-rec{
+  background-color: red;
+  width: 25px;
+  height:25px;
+}
+
+
+.duration-timer{
+  color: #fff;
+
 }
