@@ -1,10 +1,19 @@
 .video-preview-container {
     padding: 20px;
     text-align: center;
+    height: 100vh;
   }
   
   .input-container {
     margin-bottom: 20px;
+    width: 95%;
+    /* margin: 20px auto 20px auto; Center horizontally and add vertical margin */
+
+  }
+
+  .button-container{
+    display: flex;
+    justify-content: center;
   }
   
   input {

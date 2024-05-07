@@ -8,6 +8,7 @@ import { fetchProposalDetails } from "../../Api/fetchProposalDetails";
 import { url } from "../../Api/ApiEndpoint";
 import { fetchLoginDataByProposalNoAPi } from "../../Api/fetchLoginDetailsByProposalNo";
 import {  storeDataLocalStorage } from "../../Utils/LocalStorage";
+import Header from "../../Component/Header";
 
 export const ProposalInfoPage = ({ route }) => {
   const { proposalNumber } = useParams(); //extract proposal number
@@ -64,6 +65,8 @@ export const ProposalInfoPage = ({ route }) => {
 
   return (
     <div className="container">
+                <Header /> {/* Include the Header component */}
+
       {" "}
       {/* Use CSS module class */}
       {isProposalexist ? (

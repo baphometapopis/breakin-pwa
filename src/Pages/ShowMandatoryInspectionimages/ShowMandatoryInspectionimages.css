@@ -8,6 +8,7 @@
     background-color: var(--BACKGROUND_COLOR);
     width: 100vw;
     height: 100%;
+    margin-top: 12px;
 }
 
 .imageGrid {
@@ -105,10 +106,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 15px;
 }
 
+.loaderContainer1{
+    padding: 15px;
+
+    border-radius: 12px;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content:center ;
+    align-items: center;
+}
 .loader {
-    border: 4px solid #f3f3f3;
+    border:4px solid #d0d0d0;
     border-radius: 50%;
     border-top: 4px solid #3498db;
     width: 30px;
@@ -119,7 +130,7 @@
 .loaderText {
     margin-left: 10px;
     font-size: 20px;
-    color: white;
+    color: rgb(57, 57, 57);
 }
 
 @keyframes spin {

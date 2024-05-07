@@ -86,8 +86,7 @@ export const submit_inspection_Images = async (data, param) => {
   }
 };
 
-export const submit_inspection_Video = async (videouri, data) => {
-  console.log(videouri);
+export const submit_inspection_Video = async (data) => {
   var formdata = new FormData();
 
   formdata.append('pos_id', data?.pos_id);
@@ -95,7 +94,7 @@ export const submit_inspection_Video = async (videouri, data) => {
   formdata.append('inspection_type', data?.inspection_type);
   formdata.append('proposal_id', data?.id);
   formdata.append('policy_endorsement_id', data?.policy_endorsement_id);
-  formdata.append('file', videouri);
+  formdata.append('file',data?.videouri);
 
   // formdata.append('inspection_type', data?.inspection_type);
   const url = Api_Endpoints.submit_inspection_Video_Endpoint;

@@ -7,8 +7,16 @@ import { fetch_Checkpoint_inspection_question } from "../../Api/fetchQuestion";
 import { submit_inspection_checkpointData } from "../../Api/submitInspectionQuestion";
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 import CommonModal from "../../Component/CommonModel";
+import Header from "../../Component/Header";
 
 export const InspectionCheckpoint = ({ route }) => {
+  const [CurrentQuestion,setcurrentQuestion]=useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRequestDone, setIsRequestDone] = useState(false);
+  const [FailedArray, setFailedArray] = useState('');
+
+
+
   const [proposalInfo, setProposalInfo] = useState(null);
   const [localdata, setLocaldata] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,11 +26,11 @@ export const InspectionCheckpoint = ({ route }) => {
 
   const [submissionStatus, setSubmissionStatus] = useState({}); // State to track submission status
 
-  // const openModal = (message, type) => {
-  //   setModalMessage(message);
-  //   setModalType(type);
-  //   setIsModalOpen(true);
-  // };
+  const openModal = (message, type) => {
+    setModalMessage(message);
+    setModalType(type);
+    setIsModalOpen(true);
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -90,34 +98,39 @@ export const InspectionCheckpoint = ({ route }) => {
   };
 
   // Function to handle form submission
-  const handleSubmit = async () => {
-    // if (allQuestionsAnswered()) {
-    //   setIsSubmitting(true); // Start loading
-    //   console.log("All questions answered:", selectedAnswers);
-    //   await submitQuestions(selectedAnswers);
-    //   openModal("All Question Submitted please click", "success")
-    //   setIsSubmitting(false); // Stop loading
-    // } else {
-    //   // Display error messages for unanswered questions
-    //   const updatedErrorMessages = {};
-    //   checkpointQuestion.forEach((question) => {
-    //     if (!selectedAnswers[question.breakin_inspection_post_question_id]) {
-    //       updatedErrorMessages[question.breakin_inspection_post_question_id] =
-    //         "This question is required";
-    //     } else {
-    //       updatedErrorMessages[question.breakin_inspection_post_question_id] =
-    //         "";
-    //     }
-    //   });
-    //   setErrorMessages(updatedErrorMessages);
-    // }
+const goNext=()=>{
+  navigate('/camera')
+}
 
-    navigate('/camera')
+  const handleSubmit = async () => {
+
+    if (allQuestionsAnswered()) {
+      setIsSubmitting(true); // Start loading
+      console.log("All questions answered:", selectedAnswers);
+      await submitQuestions(selectedAnswers);
+      openModal("All Question Submitted please click", "success")
+      setIsSubmitting(false); // Stop loading
+    } else {
+      // Display error messages for unanswered questions
+      const updatedErrorMessages = {};
+      checkpointQuestion.forEach((question) => {
+        if (!selectedAnswers[question.breakin_inspection_post_question_id]) {
+          updatedErrorMessages[question.breakin_inspection_post_question_id] =
+            "This question is required";
+        } else {
+          updatedErrorMessages[question.breakin_inspection_post_question_id] =
+            "";
+        }
+      });
+      setErrorMessages(updatedErrorMessages);
+    }
+// navigate('/camera')
   };
 
   // Function to submit questions
   // eslint-disable-next-line
   async function submitQuestions(questionDataList) {
+    setIsLoading(true)
     const retryArray = [];
     const failedSubmissionsArray = [];
     const questiondone = [];
@@ -143,6 +156,7 @@ export const InspectionCheckpoint = ({ route }) => {
           );
           if (submittedresponse?.status) {
             console.log(`Question ${questionId} submitted successfully`);
+            setcurrentQuestion(questionId);
             questiondone.push(Number(questionId));
             // Update submission status for this question to true
             updateSubmissionStatus(questionId, true);
@@ -176,6 +190,13 @@ export const InspectionCheckpoint = ({ route }) => {
     } catch (error) {
       console.error(`Error submitting questions: ${error.message}`);
     }
+    setIsLoading(false)
+    setIsRequestDone(true)
+    setFailedArray(failedSubmissionsArray)
+
+
+
+
   }
 
   const isQuestionSubmitted = (questionId) => {
@@ -192,14 +213,14 @@ export const InspectionCheckpoint = ({ route }) => {
   };
 
   // Function to check if all questions have been answered
-  // const allQuestionsAnswered = () => {
-  //   for (const question of checkpointQuestion) {
-  //     if (!selectedAnswers[question.breakin_inspection_post_question_id]) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // };
+  const allQuestionsAnswered = () => {
+    for (const question of checkpointQuestion) {
+      if (!selectedAnswers[question.breakin_inspection_post_question_id]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   const fetchDataFromLocalStorage = async () => {
     const localdata = await fetchDataLocalStorage('Claim_loginDetails')
@@ -215,8 +236,11 @@ export const InspectionCheckpoint = ({ route }) => {
     fetchDataFromLocalStorage()
   }, [])
 
+  useEffect(()=>{},[FailedArray])
   return (
     <div className="container">
+                      <Header /> {/* Include the Header component */}
+
       <CommonModal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} type={modalType} />
 
       <div className={"optionCard"}>
@@ -259,10 +283,36 @@ export const InspectionCheckpoint = ({ route }) => {
           </div>
         ))}
 
+<div style={{marginTop:'12px',justifyContent:'center',display:'flex',
+alignItems:'center'}}>
+
+      {
+                  isRequestDone && FailedArray.length === 0 ? 
+
+        <button onClick={goNext} disabled={isSubmitting}>
+          Next
+        </button>
+        :
         <button onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
+        
+        }
+
+   
+</div>
+
       </div>
+      
+      {isLoading && (
+        <div className="loaderContainer">
+                    <div className="loaderContainer1">
+
+          <div className="loader"></div>
+          <p className="loaderText">{`${CurrentQuestion}/${Object.keys(selectedAnswers).length+1} Submitting Question`}</p>
+        </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -30,14 +30,22 @@ const VideoRecorder = () => {
     // This effect will run whenever recordedChunks state changes
     if (recordedChunks.length > 0 && !capturing) {
       const blob = new Blob(recordedChunks, {
-        type: "video/webm"
+        type: "video/webm",
+        
       });
+      const fileName = "video.webm"; // Add the desired filename with extension
+
+      const videoFile = new File([blob], fileName, { type: "video/webm" });
+
+
+      console.log(blob,'videoFile')
 
       const videoUri = URL.createObjectURL(blob);
       navigation("/VideoPreview", {
         state: {
-          videoUri: videoUri,
-          proposalInfo: "info",
+          videoUri: videoFile,
+
+          videoblob: videoUri,
         },
       });
     }

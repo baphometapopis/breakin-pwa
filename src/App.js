@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // App.js
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
@@ -7,13 +9,15 @@ import ShowinspectionImages from "./Pages/ShowMandatoryInspectionimages/ShowMand
 import VideoRecorder from "./Pages/VideoRecord";
 import VideoPreview from "./Pages/VideoPreview";
 import InspectionCheckpoint from "./Pages/InspectionCheckpoint/InspectionCheckpoint";
+import Header from "./Component/Header";
 
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route
+        <Route  
           path="/proposal-info/:proposalNumber"
           element={<ProposalInfoPage />}
         />

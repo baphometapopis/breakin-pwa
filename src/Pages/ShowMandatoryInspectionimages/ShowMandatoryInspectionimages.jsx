@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import "./ShowMandatoryInspectionimages.css"; // Import your CSS file
 import { useLocation, useNavigate } from "react-router-dom";
-import { convertImageToBase64 } from "../../Utils/convertImageToBase64";
+import { convertImageToBase64, extractBase64FromDataURI } from "../../Utils/convertImageToBase64";
 import { submit_inspection_Images } from "../../Api/submitInspectionQuestion";
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
+import Header from "../../Component/Header";
+import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 
 const ShowinspectionImages = ({ route }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -14,7 +16,6 @@ const ShowinspectionImages = ({ route }) => {
   const [SubmittedQuestions,setSubmittedQuestions]=useState('');
   const [SubmittedImages,setsubmittedImages]=useState('');
   const [FailedArray,setFailedArray]=useState('');
-  const [RequestDone,setRequestDone]=useState('');
   const [fetchedQuestion,setFetchedQuestion]=useState('');
   const [localdata, setLocaldata] = useState(null);
 
@@ -22,23 +23,34 @@ const ShowinspectionImages = ({ route }) => {
 
 
 
+  const fetchDataFromLocalStorage = async () => {
+    const localdata = await fetchDataLocalStorage('Claim_loginDetails')
+    const proposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
+
+    if (localdata && proposalInfo) {
+      setLocaldata(localdata?.pos_login_data)
+      console.log(localdata,proposalInfo)
+      // setProposalInfo(proposalInfo)
+    }
+  }
+
 
   const [isLoading, setIsLoading] = useState(false);
 const navigate =useNavigate()
   const { state } = useLocation();
   const { capturedImagesWithOverlay,proposalInfo } = state;
 
-  console.log(state);
+  const goNext=()=>{
+    navigate('/VideoRecord');
+  }
+
+
 
   const handleSubmit = () => {
     // setIsSubmitted(false); // Reset submitted state
-    if (true) {
-      navigate('/VideoRecord', {
-        proposalInfo: proposalInfo,
-      });
-    } 
-    else
-{
+    if (!isRequestDone) {
+   
+
       FilterImages();
     }
   };
@@ -65,10 +77,12 @@ const navigate =useNavigate()
         let data = {
           break_in_case_id: questionData?.break_in_case_id,
           question_id: questionData?.question_id,
-          pos_id: questionData?.pos_id,
+          pos_id: localdata?.pos_login_data?.id,
           proposal_list_id: questionData?.proposal_list_id,
           ic_id: questionData?.ic_id,
-          answer_id: questionData?.answer_id,
+          // answer_id: questionData?.answer_id,
+          answer_id:extractBase64FromDataURI(questionData?.answer_id),
+
           inspection_type: questionData?.inspection_type,
           part: questionData?.part,
         };
@@ -106,7 +120,7 @@ const navigate =useNavigate()
     }
     setIsLoading(false);
     setFailedArray(failedSubmissionsArray);
-    setRequestDone(true);
+    setIsRequestDone(true);
   }
   
 
@@ -154,11 +168,17 @@ const navigate =useNavigate()
   };
 
   useEffect(() => {
-    fetchInspectionImages()  }, []);
+    fetchInspectionImages() ;
+    fetchDataFromLocalStorage() ;}, []);
     useEffect(()=>{},[CurrentQuestion])
 
+
   return (
+    <div style={{backgroundColor:'#F1FBFF'}}>
+    <Header /> {/* Include the Header component */}
+
     <div className="container1">
+
       <div className="imageGrid">
         {capturedImagesWithOverlay?.map((item, index) => (
           <div key={index} className="imageContainer">
@@ -171,21 +191,39 @@ const navigate =useNavigate()
               alt={item?.part}
               onClick={() => handleImagePress(item.uri)}
             />
-            <p className="overlayText">{item?.imagename}</p>
+            <p className="overlayText">{item?.part}</p>
           </div>
         ))}
       </div>
-      <button
+
+
+      {
+                  isRequestDone && FailedArray.length === 0 ? 
+
+        <button onClick={goNext} >
+          Next
+        </button>
+        :
+        <button
         className="submitButton"
         onClick={handleSubmit}
         disabled={isLoading}
       >
         {isLoading ? "Submitting..." : "Submit"}
       </button>
+        
+        }
+
+   
+
+
+
       {isLoading && (
         <div className="loaderContainer">
+          <div className="loaderContainer1">
           <div className="loader"></div>
           <p className="loaderText">{`${CurrentQuestion}/${capturedImagesWithOverlay.length+1} Submitting Question`}</p>
+          </div>
         </div>
       )}
       {selectedImage && (
@@ -200,6 +238,7 @@ const navigate =useNavigate()
           />
         </div>
       )}
+    </div>
     </div>
   );
 };

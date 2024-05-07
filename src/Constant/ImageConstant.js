@@ -20,6 +20,7 @@ import RadioChecked from "../Assets/Icons/radiochecked.png";
 import IconSharewhite from "../Assets/Icons/iconSharewhite.png";
 import IconChecked from "../Assets/Icons/iconChecked.png";
 import IconUnChecked from "../Assets/Icons/iconCancel.png";
+import Search2 from '../Assets/Icons/iconsSearch1.png'
 
 import IconError from "../Assets/Icons/iconError.png";
 import IconUpload from "../Assets/Icons/iconUpload.png";
@@ -114,4 +115,5 @@ export {
   Reset,
   Search,
   RadioChecked,
+  Search2
 };

@@ -4,9 +4,9 @@
   background-color:var(--BACKGROUND_COLOR);
   width: 100vw;
   height: 100vh;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   overflow-x: scroll;
 }
 
@@ -93,7 +93,6 @@ label {
 @media (max-width: 768px) {
   .optionCard {
     width: 95%; /* Adjusted width for smaller screens */
-    height: ;
   }
   .logoImage{
     max-width: 80%; /* Ensure image fits within its container */
