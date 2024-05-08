@@ -8,8 +8,11 @@ import { submit_inspection_Images } from "../../Api/submitInspectionQuestion";
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 import Header from "../../Component/Header";
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
+import InspectionModalRules from "../../Component/Modal/InspectionModalRules";
 
 const ShowinspectionImages = ({ route }) => {
+  const [IsInstructionModalVisible,setIsInstructionModalVisible]=useState(false)
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [isRequestDone,setIsRequestDone]=useState(false)
   const [CurrentQuestion,setcurrentQuestion]=useState('');
@@ -21,7 +24,10 @@ const ShowinspectionImages = ({ route }) => {
 
 
 
-
+  const InstructioncloseModal = () => {
+    setIsInstructionModalOpen(false);
+    navigate('/VideoRecord',{replace:true})
+  };
 
   const fetchDataFromLocalStorage = async () => {
     const localdata = await fetchDataLocalStorage('Claim_loginDetails')
@@ -29,7 +35,6 @@ const ShowinspectionImages = ({ route }) => {
 
     if (localdata && proposalInfo) {
       setLocaldata(localdata?.pos_login_data)
-      console.log(localdata,proposalInfo)
       // setProposalInfo(proposalInfo)
     }
   }
@@ -41,7 +46,7 @@ const navigate =useNavigate()
   const { capturedImagesWithOverlay,proposalInfo } = state;
 
   const goNext=()=>{
-    navigate('/VideoRecord');
+setIsInstructionModalVisible(true)
   }
 
 
@@ -216,7 +221,12 @@ const navigate =useNavigate()
 
    
 
-
+<InspectionModalRules
+        isVisible={IsInstructionModalVisible}
+        onClose={InstructioncloseModal}
+        isVideo={true}
+        
+      />
 
       {isLoading && (
         <div className="loaderContainer">

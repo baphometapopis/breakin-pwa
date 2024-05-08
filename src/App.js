@@ -1,6 +1,8 @@
 /* eslint-disable */
 
 // App.js
+import { ToastContainer } from "react-toastify";
+
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
 import CameraScreen from "./Pages/CameraScreen/CameraScreen";
@@ -14,6 +16,8 @@ import Header from "./Component/Header";
 function App() {
   return (
     <BrowserRouter>
+              <ToastContainer />
+
 
       <Routes>
         <Route path="/" element={<HomePage />} />

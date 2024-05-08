@@ -8,8 +8,20 @@ import "react-html5-camera-photo/build/css/index.css";
 import "./CameraScreen.css"; // Import the CSS file
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
+import { PlaceholderImage } from "../../Constant/ImageConstant";
 
 const CameraScreen = () => {
+  const FrontvideoConstraints = {
+    facingMode: 'user', // This will use the front camera if available
+
+
+  };
+
+  const BackvideoConstraints = {
+
+    facingMode: { exact: "environment" }, // This will use the back camera if available
+
+  };
 
 
   const [windowSize, setWindowSize] = useState({
@@ -18,6 +30,8 @@ const CameraScreen = () => {
   });
   const [images, setImages] = useState([]);
   const [ProposalInfo, setProposalInfo] = useState([]);
+  const [VideoConstraints, setVideoConstraints] = useState(BackvideoConstraints);
+
 
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
@@ -26,13 +40,23 @@ const CameraScreen = () => {
   const navigation = useNavigate();
   const webcamRef = useRef(null);
 
-  const videoConstraints = {
-    // facingMode: 'user', // This will use the back camera if available
+  
 
-    facingMode: { exact: "environment" }, // This will use the back camera if available
-    // facingMode: { exact: "environment" }, // This will use the back camera if available
+const skipImage=()=>{
+  if (currentImageIndex < images.length - 1) {
+    setCurrentImageIndex(currentImageIndex + 1);
+    setCapturedImage(null);
+    setIsModalOpen(true);
+  } else {
+    navigation("/ShowInspectionImages", {
+      state: {
+        capturedImagesWithOverlay: allCapturedImages,
+        proposalInfo: ProposalInfo,
+      },
+    });
+  }
 
-  };
+}
 
   const handleRetakePhoto = () => {
     setCapturedImage(null);
@@ -92,6 +116,7 @@ const CameraScreen = () => {
   };
 
   useEffect(() => {
+
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
@@ -108,7 +133,14 @@ const CameraScreen = () => {
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen, images,ProposalInfo]);
+  useEffect(() => {}, [isModalOpen, images,ProposalInfo,VideoConstraints]);
+
+  useEffect(()=>{
+    if(images[currentImageIndex]?.id==17)
+    {
+      setVideoConstraints(FrontvideoConstraints)
+    }
+},[])
   useEffect(() => {
     fetchInspectionImages();
   }, []);
@@ -118,11 +150,13 @@ const CameraScreen = () => {
         <div className="modal">
           <div style={{ flex: 0.4 }}>
             <img
-              src={images[currentImageIndex]?.sample_image_url}
+              src={images[currentImageIndex]?.sample_image_url?images[currentImageIndex]?.sample_image_url:PlaceholderImage}
               alt={images[currentImageIndex]?.name}
               style={{ width: "100%", height: "80%" }}
             />
             <p className="modalText">{images[currentImageIndex]?.name}</p>
+            <p className="modalText">{images[currentImageIndex]?.is_mand}</p>
+
             <p className="modalText">
               {currentImageIndex + 1}/{images.length}
             </p>
@@ -148,8 +182,13 @@ const CameraScreen = () => {
             <p className="instructionText">
               {"\u2022"} Click on Ok When Your are Ready
             </p>
+            <div style={{display:'flex',flexDirection:'row',gap:10}}>
             <div onClick={() => setIsModalOpen(false)} className="ok-button">
               Start Camera
+            </div>
+          {images[currentImageIndex]?.is_mand==0 ?  <div onClick={skipImage} className="skip-button">
+              Skip
+            </div>:null}
             </div>
           </div>
         </div>
@@ -162,7 +201,7 @@ const CameraScreen = () => {
             screenshotFormat="image/jpeg"
             // width={windowSize.w}
             height={windowSize.height}
-            videoConstraints={videoConstraints}
+            videoConstraints={VideoConstraints}
           />
           <div className="capture-button-container">
             <div onClick={capture} className="capture-button"></div>
@@ -188,30 +227,3 @@ const CameraScreen = () => {
 };
 
 export default CameraScreen;
-
-// const Camera = () => {
-//   const webcamRef = useRef(null);
-
-//   const capture = useCallback(() => {
-//     const imageSrc = webcamRef.current.getScreenshot();
-//     console.log(imageSrc); // You can use this image source as you need
-//   }, [webcamRef]);
-
-//   const videoConstraints = {
-//     facingMode: { exact: "environment" }, // This will use the back camera if available
-//   };
-
-//   return (
-//     <>
-//       <Webcam
-//         audio={false}
-//         ref={webcamRef}
-//         screenshotFormat="image/jpeg"
-//         videoConstraints={videoConstraints}
-//       />
-//       <button onClick={capture}>Capture</button>
-//     </>
-//   );
-// };
-
-// export default Camera;

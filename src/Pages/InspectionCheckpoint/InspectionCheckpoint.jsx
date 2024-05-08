@@ -8,8 +8,13 @@ import { submit_inspection_checkpointData } from "../../Api/submitInspectionQues
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 import CommonModal from "../../Component/CommonModel";
 import Header from "../../Component/Header";
+import InspectionModalRules from "../../Component/Modal/InspectionModalRules";
 
 export const InspectionCheckpoint = ({ route }) => {
+  const [IsInstructionModalVisible,setIsInstructionModalVisible]=useState(false)
+
+
+ 
   const [CurrentQuestion,setcurrentQuestion]=useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isRequestDone, setIsRequestDone] = useState(false);
@@ -35,7 +40,10 @@ export const InspectionCheckpoint = ({ route }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
+  const InstructioncloseModal = () => {
+    // setIsInstructionModalVisible(false);
+    navigate('/Camera',{replace:true})
+  };
   const [checkpointQuestion, setCheckpointQuestion] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [isCustomerCareModalVisible, setIsCustomerCareModalVisible] = useState(false);
@@ -99,7 +107,7 @@ export const InspectionCheckpoint = ({ route }) => {
 
   // Function to handle form submission
 const goNext=()=>{
-  navigate('/camera')
+setIsInstructionModalVisible(true)
 }
 
   const handleSubmit = async () => {
@@ -108,7 +116,7 @@ const goNext=()=>{
       setIsSubmitting(true); // Start loading
       console.log("All questions answered:", selectedAnswers);
       await submitQuestions(selectedAnswers);
-      openModal("All Question Submitted please click", "success")
+      openModal("Inspection Submitted", "success")
       setIsSubmitting(false); // Stop loading
     } else {
       // Display error messages for unanswered questions
@@ -239,7 +247,7 @@ const goNext=()=>{
   useEffect(()=>{},[FailedArray])
   return (
     <div className="container">
-                      <Header /> {/* Include the Header component */}
+                      <Header checkLocal={true} /> {/* Include the Header component */}
 
       <CommonModal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} type={modalType} />
 
@@ -313,6 +321,13 @@ alignItems:'center'}}>
         </div>
         </div>
       )}
+
+<InspectionModalRules
+        isVisible={IsInstructionModalVisible}
+        onClose={InstructioncloseModal}
+        
+      />
+
     </div>
   );
 };

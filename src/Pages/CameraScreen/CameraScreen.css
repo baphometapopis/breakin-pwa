@@ -61,7 +61,21 @@
     padding: 5px;
     cursor: pointer;
 
+
   }
+  .skip-button {
+    background-color: #bd6d6d;
+    width: 85%;
+    text-align: center;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+
+  }
+
+  
+
   
   .camera-video {
     width: 100vw;

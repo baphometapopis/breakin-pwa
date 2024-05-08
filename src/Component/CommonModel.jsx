@@ -1,4 +1,5 @@
 import React from "react";
+import { Success } from "../Constant/ImageConstant";
 import "./CommonModal.css";
 
 const CommonModal = ({ isOpen, onClose, message, type }) => {
@@ -14,7 +15,7 @@ const CommonModal = ({ isOpen, onClose, message, type }) => {
         </span>
         <div className={`modal-body ${type}`}>
           {type === "success" ? (
-            <img src="success-icon.png" alt="Success" className="icon" />
+            <img src={Success} alt="Success" className="icon" />
           ) : (
             <img src="error-icon.png" alt="Error" className="icon" />
           )}

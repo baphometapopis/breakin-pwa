@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../Component/Header";
 import { Search2 } from "../../Constant/ImageConstant";
@@ -19,6 +19,21 @@ const HomePage = () => {
     
     // You can perform further actions such as fetching data based on the search keyword
   };
+
+  
+  
+  useEffect(() => {
+    const handlePopstate = (event) => {
+      window.history.pushState(null, '', window.location.href);
+      event.preventDefault();
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, []);
 
   return (
     <div className="container">

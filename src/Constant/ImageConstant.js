@@ -61,6 +61,8 @@ import RejectedIcon from "../Assets/Icons/drawerIcons/RejectedIcon.png";
 import Logout from "../Assets/Icons/drawerIcons/logout.png";
 
 import Magma from "../Assets/IC_Logo/Magma1.png";
+import Success from "../Assets/Images/Sucess.png";
+
 
 export {
   RejectedIcon,
@@ -115,5 +117,6 @@ export {
   Reset,
   Search,
   RadioChecked,
-  Search2
+  Search2,
+  Success,
 };
