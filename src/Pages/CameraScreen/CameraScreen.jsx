@@ -17,7 +17,7 @@ const CameraScreen = () => {
 
   };
 
-  const VideoConstraints = {
+  const BackvideoConstraints = {
 
     facingMode: { exact: "environment" }, // This will use the back camera if available
 
@@ -33,6 +33,7 @@ const CameraScreen = () => {
   const [longitude, setLongitude] = useState(null);
   const [images, setImages] = useState([]);
   const [ProposalInfo, setProposalInfo] = useState([]);
+  const [VideoConstraints, setVideoConstraints] = useState(BackvideoConstraints);
 
 
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -195,7 +196,7 @@ const skipImage=()=>{
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen, images,ProposalInfo]);
+  useEffect(() => {}, [isModalOpen, images,ProposalInfo,VideoConstraints]);
 
   useEffect(()=>{
     if(images[currentImageIndex]?.id==17)
