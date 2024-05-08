@@ -16,11 +16,11 @@ const InspectionModalRules = ({ isVisible, onClose, proposalData, isVideo }) => 
     const fetchData = await fetch_Image_inspection_question();
     if (fetchData.status) {
       if (isVideo) {
-        navigate('/videomodule', {
+        navigate('/VideoRecord', {
           proposalInfo: proposalData,replace:true
         });
       } else {
-        navigate('/cameramodule', {
+        navigate('/camera', {
           imageData: fetchData?.data?.filter(item => item.is_mand === '1'),
           proposalInfo: proposalData,replace:true
         });
