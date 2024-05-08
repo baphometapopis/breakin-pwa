@@ -28,6 +28,9 @@ const CameraScreen = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [latitude, setLatitude] = useState(null);
+
+  const [longitude, setLongitude] = useState(null);
   const [images, setImages] = useState([]);
   const [ProposalInfo, setProposalInfo] = useState([]);
   const [VideoConstraints, setVideoConstraints] = useState(BackvideoConstraints);
@@ -61,10 +64,49 @@ const skipImage=()=>{
   const handleRetakePhoto = () => {
     setCapturedImage(null);
   };
+  // const capture = () => {
+  //   const imageSrc = webcamRef.current.getScreenshot();
+  //   setCapturedImage(imageSrc);
+  // };
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    setCapturedImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+  
+    // Create a new image object to load the captured image
+    const image = new Image();
+    image.onload = () => {
+      // Set canvas dimensions to match the captured image, swapping width and height for rotation
+      canvas.width = image.height; // Height becomes width after rotation
+      canvas.height = image.width; // Width becomes height after rotation
+  
+      // Rotate the canvas 90 degrees clockwise
+      ctx.rotate(Math.PI / 2); // 90 degrees in radians
+  
+      // Translate the origin point to the top-right corner (after rotation)
+      ctx.translate(0, -canvas.width);
+  
+      // Draw the captured image onto the canvas (after rotation)
+      ctx.drawImage(image, 0, 0);
+  
+      // Add timestamp text
+      ctx.font = '25px Arial';
+      ctx.fillStyle = 'red';
+      const timestamp = new Date().toLocaleString();
+      const text = `Time/Date: ${timestamp}  Lat/Long :${latitude} / ${longitude}`;
+      const textWidth = ctx.measureText(text).width;
+      const x = 10; // Adjusted for padding
+      const y = 20; // Adjusted for position from top
+      ctx.fillText(text, x, y); // Adjust position as needed
+  
+      // Set the captured image with timestamp as the new captured image
+      setCapturedImage(canvas.toDataURL('image/jpeg'));
+    };
+    // Set the captured image source
+    image.src = imageSrc;
   };
+  
+  
 
   const handleSavePhoto = () => {
     if (capturedImage) {
@@ -114,6 +156,27 @@ const skipImage=()=>{
     console.log(imageRes.data);
     setImages(imageRes.data);
   };
+
+  useEffect(() => {
+    // Get device ID
+    const id = navigator.userAgent;
+
+    // Get user's current position
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation not supported");
+    }
+    
+  }, []);
 
   useEffect(() => {
 

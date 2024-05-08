@@ -10,9 +10,9 @@ import "./VideoPreview.css"; // Import CSS file for styling
 const VideoPreview = () => {
   const { state } = useLocation();
   const { videoUri,videoblob } = state;
-  const [latitude, setLatitude] = useState(null);
   const [LocalData, setLocaldata] = useState('');
   const [ProposalInfo, setProposalInfo] = useState('');
+  const [latitude, setLatitude] = useState(null);
 
   const [longitude, setLongitude] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
