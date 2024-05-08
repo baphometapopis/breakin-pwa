@@ -264,7 +264,7 @@ const skipImage=()=>{
             screenshotFormat="image/jpeg"
             // width={windowSize.w}
             height={windowSize.height}
-            videoConstraints={VideoConstraints}
+            videoConstraints={BackvideoConstraints}
           />
           <div className="capture-button-container">
             <div onClick={capture} className="capture-button"></div>
