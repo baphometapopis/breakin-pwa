@@ -90,7 +90,7 @@ const skipImage=()=>{
       ctx.drawImage(image, 0, 0);
   
       // Add timestamp text
-      ctx.font = '25px Arial';
+      ctx.font = '18px Arial';
       ctx.fillStyle = 'red';
       const timestamp = new Date().toLocaleString();
       const text = `Time/Date: ${timestamp}  Lat/Long :${latitude} / ${longitude}`;
