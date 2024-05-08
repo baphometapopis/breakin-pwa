@@ -188,7 +188,7 @@ export const ProposalInfoPage = ({ route }) => {
                 "referBack") && (
               <button
                 className={"StartInspection"}
-                onClick={() =>     navigate('/CheckPermission', { replace: true })}
+                onClick={() =>     navigate('/CheckPermission')}
               >
                 <img src={StartInspection} alt="Start Inspection Icon" />
                 <span>Start Inspection</span>
