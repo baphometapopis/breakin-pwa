@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import './PermissionPage.css'; // Import CSS file for styling
 
 const PermissionPage = () => {
+  const navigate=useNavigate()
   const [isMobile, setIsMobile] = useState(false);
   const [cameraPermission, setCameraPermission] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
+  const [canStartInspection, setCanStartInspection] = useState(false);
 
   useEffect(() => {
     // Check if the page is accessed on a mobile device
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    console.log(userAgent)
     setIsMobile(/android|iphone|ipad|ipod/i.test(userAgent));
 
     // Check for camera permission
@@ -27,6 +31,15 @@ const PermissionPage = () => {
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    // Check if both camera and location permissions are granted
+    if (cameraPermission === true && locationPermission === true) {
+      setCanStartInspection(true);
+    } else {
+      setCanStartInspection(false);
+    }
+  }, [cameraPermission, locationPermission]);
+
   const requestPermissions = () => {
     // Request camera and geolocation permissions
     if (isMobile) {
@@ -41,11 +54,6 @@ const PermissionPage = () => {
     }
   };
 
-  // if (!isMobile) {
-  //   alert('This page is accessible only on mobile devices.');
-  //   return null;
-  // }
-
   return (
     <div className="container">
       <div className="permission-content">
@@ -54,7 +62,8 @@ const PermissionPage = () => {
           <li>{locationPermission ? '✅ Location permission granted' : '❌ Location permission denied'}</li>
           <li>{isMobile ? '✅ Mobile device detected' : '❌ Not a mobile device'}</li>
         </ul>
-        <button onClick={requestPermissions}>Request Permissions</button>
+        <button onClick={requestPermissions} type='submit'>Request Permissions</button>
+        {canStartInspection && <button onClick={()=>navigate('/InspectionCheckpoint', { replace: true })}>Start Inspection</button>}
       </div>
     </div>
   );
