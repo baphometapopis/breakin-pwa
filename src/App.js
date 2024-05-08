@@ -12,6 +12,7 @@ import VideoRecorder from "./Pages/VideoRecord";
 import VideoPreview from "./Pages/VideoPreview";
 import InspectionCheckpoint from "./Pages/InspectionCheckpoint/InspectionCheckpoint";
 import Header from "./Component/Header";
+import PermissionPage from "./Pages/Permmission Page/PermissionPage";
 
 function App() {
   return (
@@ -24,6 +25,10 @@ function App() {
         <Route  
           path="/proposal-info/:proposalNumber"
           element={<ProposalInfoPage />}
+        />
+        <Route  
+          path="/CheckPermission"
+          element={<PermissionPage />}
         />
         <Route
           path="/InspectionCheckpoint"

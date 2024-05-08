@@ -17,7 +17,7 @@ const CameraScreen = () => {
 
   };
 
-  const BackvideoConstraints = {
+  const VideoConstraints = {
 
     facingMode: { exact: "environment" }, // This will use the back camera if available
 
@@ -33,7 +33,6 @@ const CameraScreen = () => {
   const [longitude, setLongitude] = useState(null);
   const [images, setImages] = useState([]);
   const [ProposalInfo, setProposalInfo] = useState([]);
-  const [VideoConstraints, setVideoConstraints] = useState(BackvideoConstraints);
 
 
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -90,10 +89,10 @@ const skipImage=()=>{
       ctx.drawImage(image, 0, 0);
   
       // Add timestamp text
-      ctx.font = '18px Arial';
+      ctx.font = '25px Arial';
       ctx.fillStyle = 'red';
       const timestamp = new Date().toLocaleString();
-      const text = `Time/Date: ${timestamp}  Lat/Long :${latitude} / ${longitude}`;
+      const text = `Time/Date: ${timestamp}  Lat/Long :${latitude} / s${longitude}`;
       const textWidth = ctx.measureText(text).width;
       const x = 10; // Adjusted for padding
       const y = 20; // Adjusted for position from top
@@ -196,7 +195,7 @@ const skipImage=()=>{
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen, images,ProposalInfo,VideoConstraints]);
+  useEffect(() => {}, [isModalOpen, images,ProposalInfo]);
 
   useEffect(()=>{
     if(images[currentImageIndex]?.id==17)
@@ -264,7 +263,7 @@ const skipImage=()=>{
             screenshotFormat="image/jpeg"
             // width={windowSize.w}
             height={windowSize.height}
-            videoConstraints={BackvideoConstraints}
+            videoConstraints={VideoConstraints}
           />
           <div className="capture-button-container">
             <div onClick={capture} className="capture-button"></div>
