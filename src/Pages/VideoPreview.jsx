@@ -12,6 +12,8 @@ const VideoPreview = () => {
   const { videoUri,videoblob } = state;
   const [LocalData, setLocaldata] = useState('');
   const [ProposalInfo, setProposalInfo] = useState('');
+  const [ProposalNo, setProposalNo] = useState('');
+
   const [latitude, setLatitude] = useState(null);
 
   const [longitude, setLongitude] = useState(null);
@@ -22,11 +24,15 @@ const VideoPreview = () => {
   const fetchDataFromLocalStorage = async () => {
     const localdata = await fetchDataLocalStorage('Claim_loginDetails')
     const proposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
+    const proposalNo = await fetchDataLocalStorage('proposal_no')
+    
 
-    if (localdata && proposalInfo) {
+
+    if (localdata && proposalInfo&& proposalNo) {
       setLocaldata(localdata?.pos_login_data)
       console.log(localdata,proposalInfo)
       setProposalInfo(proposalInfo)
+      setProposalNo(proposalNo)
     }
   }
   const submitVideo= async()=>{
@@ -44,6 +50,9 @@ const VideoPreview = () => {
     
     const res= await submit_inspection_Video(data)
     console.log(res)
+    if(res?.status){
+      navigate(`/proposal-info/ProposalNo`)
+    }
   }
 
   useEffect(() => {
@@ -74,7 +83,7 @@ const VideoPreview = () => {
     // Handle retake logic here
     // You can redirect or reset the form state, etc.
     // navigate('/VideoRecord');
-    navigate('/VideoRecord', { replace: true, state: { reset: true } });
+    navigate('/VideoRecord', );
 
 
   };

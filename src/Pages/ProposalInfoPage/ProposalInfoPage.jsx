@@ -31,6 +31,8 @@ export const ProposalInfoPage = ({ route }) => {
       if (getData.status) {
         setProposalInfo(getData?.data);
         storeDataLocalStorage('Claim_proposalDetails',getData?.data)
+        storeDataLocalStorage('proposal_no',proposalNumber)
+
       } else {
         // setisErrorVisible(true);
       }
@@ -40,7 +42,7 @@ export const ProposalInfoPage = ({ route }) => {
     } finally {
       // setLoading(false);
     }
-  }, []);
+  }, [proposalNumber]);
   // Make sure to include all dependencies used within useCallback.
 
   const fetchProposal = useCallback(async () => {
