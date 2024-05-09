@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { submit_inspection_Video } from "../Api/submitInspectionQuestion";
