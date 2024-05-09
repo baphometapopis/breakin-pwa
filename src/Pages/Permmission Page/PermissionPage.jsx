@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from '../../Component/Header';
 import './PermissionPage.css'; // Import CSS file for styling
 
 const PermissionPage = () => {
@@ -56,6 +57,8 @@ const PermissionPage = () => {
 
   return (
     <div className="container">
+                            <Header checkLocal={true} /> {/* Include the Header component */}
+
       <div className="permission-content">
         <ul>
           <li>{cameraPermission ? '✅ Camera permission granted' : '❌ Camera permission denied'}</li>

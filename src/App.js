@@ -13,6 +13,7 @@ import VideoPreview from "./Pages/VideoPreview";
 import InspectionCheckpoint from "./Pages/InspectionCheckpoint/InspectionCheckpoint";
 import Header from "./Component/Header";
 import PermissionPage from "./Pages/Permmission Page/PermissionPage";
+import ImageWithFooter from "./Pages/CameraScreen/ImageWithFooter";
 
 function App() {
   return (
@@ -33,6 +34,10 @@ function App() {
         <Route
           path="/InspectionCheckpoint"
           element={<InspectionCheckpoint />}
+        />
+             <Route
+          path="/imagecheck"
+          element={<ImageWithFooter />}
         />
         <Route path="/camera" element={<CameraScreen />} />
         <Route

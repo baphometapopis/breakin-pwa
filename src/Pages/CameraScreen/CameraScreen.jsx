@@ -8,9 +8,11 @@ import "react-html5-camera-photo/build/css/index.css";
 import "./CameraScreen.css"; // Import the CSS file
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
-import { PlaceholderImage } from "../../Constant/ImageConstant";
+import { Logo1, PlaceholderImage } from "../../Constant/ImageConstant";
 
 const CameraScreen = () => {
+  const canvasRef = useRef(null);
+
   const FrontvideoConstraints = {
     facingMode: 'user', // This will use the front camera if available
 
@@ -18,6 +20,8 @@ const CameraScreen = () => {
   };
 
   const BackvideoConstraints = {
+    // facingMode: 'user', // This will use the front camera if available
+
 
     facingMode: { exact: "environment" }, // This will use the back camera if available
 
@@ -29,6 +33,8 @@ const CameraScreen = () => {
     height: window.innerHeight,
   });
   const [latitude, setLatitude] = useState(null);
+  const [CanvaImageData, setCanvaImageData] = useState('');
+
 
   const [longitude, setLongitude] = useState(null);
   const [images, setImages] = useState([]);
@@ -67,84 +73,114 @@ const skipImage=()=>{
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setCapturedImage(imageSrc);
+
+
+
   };
-  // const capture = () => {
-  //   const imageSrc = webcamRef.current.getScreenshot();
-  //   const canvas = document.createElement('canvas');
-  //   const ctx = canvas.getContext('2d');
-  
-  //   // Create a new image object to load the captured image
-  //   const image = new Image();
-  //   image.onload = () => {
-  //     // Set canvas dimensions to match the captured image, swapping width and height for rotation
-  //     canvas.width = image.height; // Height becomes width after rotation
-  //     canvas.height = image.width; // Width becomes height after rotation
-  
-  //     // Rotate the canvas 90 degrees clockwise
-  //     ctx.rotate(Math.PI / 2); // 90 degrees in radians
-  
-  //     // Translate the origin point to the top-right corner (after rotation)
-  //     ctx.translate(0, -canvas.width);
-  
-  //     // Draw the captured image onto the canvas (after rotation)
-  //     ctx.drawImage(image, 0, 0);
-  
-  //     // Add timestamp text
-  //     ctx.font = '25px Arial';
-  //     ctx.fillStyle = 'red';
-  //     const timestamp = new Date().toLocaleString();
-  //     const text = `Time/Date: ${timestamp}  Lat/Long :${latitude} / s${longitude}`;
-  //     const textWidth = ctx.measureText(text).width;
-  //     const x = 10; // Adjusted for padding
-  //     const y = 20; // Adjusted for position from top
-  //     ctx.fillText(text, x, y); // Adjust position as needed
-  
-  //     // Set the captured image with timestamp as the new captured image
-  //     setCapturedImage(canvas.toDataURL('image/jpeg'));
-  //   };
-  //   // Set the captured image source
-  //   image.src = imageSrc;
-  // };
+
+
   
   
 
   const handleSavePhoto = () => {
-    if (capturedImage) {
-      const overlayText = images[currentImageIndex]?.name;
-      const overlayTextid = images[currentImageIndex]?.id;
   
-      const timestamp = new Date().getTime();
-      const fileName = `${images[currentImageIndex]?.name}.jpg`;
-      const fileData = {
-        uri: capturedImage, // Use the last captured image URI
-        type: 'image/jpeg',
-        name: fileName,
-        part: overlayText,
-        image_id: overlayTextid,
+    const canvas = canvasRef.current;
+  
+    const ctx = canvas.getContext('2d');
+  
+    // Set canvas dimensions to match window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  
+    // Draw on the canvas
+    ctx.fillStyle = 'green';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+    // Add blue footer bar
+    const footerHeight = 80; // Height of the footer bar
+    ctx.fillStyle = '#F1FBFF';
+    ctx.fillRect(0, canvas.height - footerHeight, canvas.width, footerHeight);
+  
+    // Draw footer text
+    ctx.fillStyle = '#0E445A';
+    ctx.font = '20px Arial';
+    ctx.textAlign = 'left'; // Align text to the left
+    const currentDate = new Date();
+
+    const timeOptions = {
+      hour12: true, // Display time in 12-hour format
+      hour: 'numeric', // Display hours as digits
+      minute: '2-digit', // Display minutes as two digits
+      second: '2-digit', // Display seconds as two digits
+    };
+    
+    const formattedTime = currentDate.toLocaleTimeString(undefined, timeOptions);
+    const formattedDate = currentDate.toLocaleDateString();
+    
+    const formattedDateTime = `${formattedDate} ${formattedTime}`;
+    
+    ctx.fillText(`Date / Time: ${formattedDateTime}`, 20, canvas.height - 50); // Start from the left
+    ctx.fillText(`Latitude / Longitude: ${latitude} / ${longitude}`, 20, canvas.height - 20); // Dynamic text
+  
+    // Load and draw footer logo
+    const logo = new Image();
+    logo.onload = () => {
+
+      const logoWidth = 130; // Width of the logo
+      const logoHeight = 50; // Height of the logo
+      const logoX = 700; // X coordinate of the logo
+      const logoY = canvas.height - footerHeight + 15; // Y coordinate of the logo
+      ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+  
+      // Load main image
+      const image = new Image();
+      image.onload = () => {
+        // Draw the main image onto the canvas
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height - footerHeight);
+        // Get data URL of the canvas
+        const dataURL = canvas.toDataURL('image/jpeg');
+        setCanvaImageData(dataURL);
+  
+        const overlayText = images[currentImageIndex]?.name;
+        const overlayTextid = images[currentImageIndex]?.id;
+  
+        const timestamp = new Date().getTime();
+        const fileName = `${images[currentImageIndex]?.name}.jpg`;
+        const fileData = {
+          uri: dataURL, // Use the canvas data URL
+          type: 'image/jpeg',
+          name: fileName,
+          part: overlayText,
+          image_id: overlayTextid,
+          date: new Date().toString(), // Store the current date
+          latitude: latitude, // Store latitude
+          longitude: longitude, // Store longitude
+        };
+  
+        setAllCapturedImages([...allCapturedImages, fileData]);
+  
+        if (currentImageIndex < images.length - 1) {
+          setCurrentImageIndex(currentImageIndex + 1);
+          setCapturedImage(null);
+          setIsModalOpen(true);
+        } else {
+          navigation("/ShowInspectionImages", {
+            state: {
+              capturedImagesWithOverlay: allCapturedImages,
+              proposalInfo: ProposalInfo,
+            },
+          });
+        }
       };
-      // const data = {
-      //   images: capturedImage,
-      //   imagename: images[currentImageIndex]?.name,
-      // };
+      image.onerror = (error) => {
+        console.error('Error loading image:', error);
+      };
+      image.src = capturedImage;
+    };
+    logo.src = Logo1;
+};
 
-      console.log(fileData)
-
-      setAllCapturedImages([...allCapturedImages, fileData]);
-
-      if (currentImageIndex < images.length - 1) {
-        setCurrentImageIndex(currentImageIndex + 1);
-        setCapturedImage(null);
-        setIsModalOpen(true);
-      } else {
-        navigation("/ShowInspectionImages", {
-          state: {
-            capturedImagesWithOverlay: allCapturedImages,
-            proposalInfo: ProposalInfo,
-          },
-        });
-      }
-    }
-  };
+  
 
   const fetchInspectionImages = async () => {
     const ProposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
@@ -153,7 +189,6 @@ const skipImage=()=>{
 
 
     const imageRes = await fetch_Image_inspection_question();
-    console.log(imageRes.data);
     setImages(imageRes.data);
   };
 
@@ -207,6 +242,7 @@ const skipImage=()=>{
   useEffect(() => {
     fetchInspectionImages();
   }, []);
+  useEffect(()=>{},[CanvaImageData])
   return (
     <div className="camera-container">
       {isModalOpen && (
@@ -271,6 +307,8 @@ const skipImage=()=>{
           </div>
         </div>
       )}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+
       {capturedImage && (
         <div>
           <img src={capturedImage} alt="Captured" className="captured-image" />

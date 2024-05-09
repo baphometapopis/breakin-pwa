@@ -9,6 +9,8 @@ import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 import CommonModal from "../../Component/CommonModel";
 import Header from "../../Component/Header";
 import InspectionModalRules from "../../Component/Modal/InspectionModalRules";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const InspectionCheckpoint = ({ route }) => {
   const [IsInstructionModalVisible,setIsInstructionModalVisible]=useState(false)
@@ -32,9 +34,10 @@ export const InspectionCheckpoint = ({ route }) => {
   const [submissionStatus, setSubmissionStatus] = useState({}); // State to track submission status
 
   const openModal = (message, type) => {
-    setModalMessage(message);
-    setModalType(type);
-    setIsModalOpen(true);
+    
+    // setModalMessage(message);
+    // setModalType(type);
+    // setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -53,7 +56,6 @@ export const InspectionCheckpoint = ({ route }) => {
 
   // Fetch checkpoint inspection questions
   const fetchQuestions = useCallback(async () => {
-    console.log(submittedQuestion)
     const response = await fetch_Checkpoint_inspection_question();
     if (response.status) {
       setCheckpointQuestion(response.data);
@@ -116,7 +118,14 @@ setIsInstructionModalVisible(true)
       setIsSubmitting(true); // Start loading
       console.log("All questions answered:", selectedAnswers);
       await submitQuestions(selectedAnswers);
-      openModal("Inspection Submitted", "success")
+      toast.success('Inspection Submitted', {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
       setIsSubmitting(false); // Stop loading
     } else {
       // Display error messages for unanswered questions
@@ -249,7 +258,7 @@ setIsInstructionModalVisible(true)
     <div className="container">
                       <Header checkLocal={true} /> {/* Include the Header component */}
 
-      <CommonModal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} type={modalType} />
+      {/* <CommonModal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} type={modalType} /> */}
 
       <div className={"optionCard"}>
         {checkpointQuestion.map((question) => (

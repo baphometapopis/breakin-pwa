@@ -25,7 +25,7 @@ const ShowinspectionImages = ({ route }) => {
 
 
   const InstructioncloseModal = () => {
-    setIsInstructionModalOpen(false);
+    setIsInstructionModalVisible(false);
     navigate('/VideoRecord',{replace:true})
   };
 
@@ -180,7 +180,7 @@ setIsInstructionModalVisible(true)
 
   return (
     <div style={{backgroundColor:'#F1FBFF'}}>
-    <Header /> {/* Include the Header component */}
+    <Header checkLocal={true}/> {/* Include the Header component */}
 
     <div className="container1">
 
