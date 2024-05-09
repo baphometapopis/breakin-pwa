@@ -83,68 +83,83 @@ const skipImage=()=>{
   
 
   const handleSavePhoto = () => {
-  
     const canvas = canvasRef.current;
-  
     const ctx = canvas.getContext('2d');
-  
+    
     // Set canvas dimensions to match window size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-  
+    
     // Draw on the canvas
     ctx.fillStyle = 'green';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+    
     // Add blue footer bar
     const footerHeight = 80; // Height of the footer bar
     ctx.fillStyle = '#F1FBFF';
     ctx.fillRect(0, canvas.height - footerHeight, canvas.width, footerHeight);
-  
+    
     // Draw footer text
+    const textFontSize = canvas.width * 0.03; // Set font size relative to canvas width
     ctx.fillStyle = '#0E445A';
-    ctx.font = '20px Arial';
+    ctx.font = `${textFontSize}px Arial`; // Set dynamic font size
     ctx.textAlign = 'left'; // Align text to the left
     const currentDate = new Date();
-
     const timeOptions = {
       hour12: true, // Display time in 12-hour format
       hour: 'numeric', // Display hours as digits
       minute: '2-digit', // Display minutes as two digits
       second: '2-digit', // Display seconds as two digits
     };
-    
     const formattedTime = currentDate.toLocaleTimeString(undefined, timeOptions);
     const formattedDate = currentDate.toLocaleDateString();
-    
     const formattedDateTime = `${formattedDate} ${formattedTime}`;
+    const textY = canvas.height - 20; // Y coordinate of the text
+    ctx.fillText(`Date / Time: ${formattedDateTime}`, 20, textY - 30); // Start from the left, adjusted for two lines
+    ctx.fillText(`Latitude / Longitude: ${latitude} / ${longitude}`, 20, textY); // Dynamic text
     
-    ctx.fillText(`Date / Time: ${formattedDateTime}`, 20, canvas.height - 50); // Start from the left
-    ctx.fillText(`Latitude / Longitude: ${latitude} / ${longitude}`, 20, canvas.height - 20); // Dynamic text
-  
     // Load and draw footer logo
     const logo = new Image();
     logo.onload = () => {
-
-      const logoWidth = 130; // Width of the logo
-      const logoHeight = 50; // Height of the logo
-      const logoX = 700; // X coordinate of the logo
-      const logoY = canvas.height - footerHeight + 15; // Y coordinate of the logo
+      // Calculate maximum logo dimensions relative to canvas size
+      const maxLogoWidth = canvas.width * 0.2; // Maximum 20% of canvas width
+      const maxLogoHeight = footerHeight * 0.8; // Maximum 80% of footer height
+      
+      // Adjust logo size to fit within the maximum dimensions
+      let logoWidth = logo.width;
+      let logoHeight = logo.height;
+      if (logoWidth > maxLogoWidth) {
+        logoHeight *= maxLogoWidth / logoWidth;
+        logoWidth = maxLogoWidth;
+      }
+      if (logoHeight > maxLogoHeight) {
+        logoWidth *= maxLogoHeight / logoHeight;
+        logoHeight = maxLogoHeight;
+      }
+      
+      // Calculate logo position relative to canvas dimensions
+      const logoX = canvas.width - logoWidth - 20; // X coordinate of the logo (20px from the right edge)
+      const logoY = canvas.height - footerHeight + (footerHeight - logoHeight) / 2; // Center vertically within footer
+      
+      // Draw the logo
       ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
-  
+      
       // Load main image
       const image = new Image();
       image.onload = () => {
         // Draw the main image onto the canvas
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height - footerHeight);
+        
         // Get data URL of the canvas
         const dataURL = canvas.toDataURL('image/jpeg');
+        console.log(dataURL);
         setCanvaImageData(dataURL);
-  
+        
+        // Add dynamic overlay text
         const overlayText = images[currentImageIndex]?.name;
         const overlayTextid = images[currentImageIndex]?.id;
-  
-        const timestamp = new Date().getTime();
+        
+        // Set other properties for the image file
         const fileName = `${images[currentImageIndex]?.name}.jpg`;
         const fileData = {
           uri: dataURL, // Use the canvas data URL
@@ -156,14 +171,17 @@ const skipImage=()=>{
           latitude: latitude, // Store latitude
           longitude: longitude, // Store longitude
         };
-  
+        
+        // Add the captured image data to the list
         setAllCapturedImages([...allCapturedImages, fileData]);
-  
+        
         if (currentImageIndex < images.length - 1) {
+          // Move to the next image if available
           setCurrentImageIndex(currentImageIndex + 1);
           setCapturedImage(null);
           setIsModalOpen(true);
         } else {
+          // Navigate to the next screen if all images are captured
           navigation("/ShowInspectionImages", {
             state: {
               capturedImagesWithOverlay: allCapturedImages,
@@ -179,6 +197,8 @@ const skipImage=()=>{
     };
     logo.src = Logo1;
 };
+
+
 
   
 
@@ -254,11 +274,11 @@ const skipImage=()=>{
               style={{ width: "100%", height: "80%" }}
             />
             <p className="modalText">{images[currentImageIndex]?.name}</p>
-            <p className="modalText">{images[currentImageIndex]?.is_mand}</p>
+            {/* <p className="modalText">{images[currentImageIndex]?.is_mand}</p> */}
 
-            <p className="modalText">
+            {/* <p className="modalText">
               {currentImageIndex + 1}/{images.length}
-            </p>
+            </p> */}
           </div>
           <div style={{ flex: 0.6 }}>
             <h5 className="modalText">
@@ -293,19 +313,34 @@ const skipImage=()=>{
         </div>
       )}
       {!isModalOpen && !capturedImage && (
-        <div>
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            // width={windowSize.w}
-            height={windowSize.height}
-            videoConstraints={VideoConstraints}
-          />
-          <div className="capture-button-container">
-            <div onClick={capture} className="capture-button"></div>
-          </div>
-        </div>
+     <div style={{ position: 'relative' }}>
+     <Webcam
+       audio={false}
+       ref={webcamRef}
+       screenshotFormat="image/jpeg"
+       height={windowSize.height}
+       videoConstraints={VideoConstraints}
+     />
+     <img
+       src={images[currentImageIndex]?.sample_image_url}
+       alt="Overlay"
+       style={{
+         position: 'absolute',
+         top: '50%',
+         left: '50%',
+         height:'150px',width:'150px',
+         transform: 'translate(-50%, -50%) rotate(90deg)',
+
+         opacity: 0.5, // Adjust the opacity as needed
+         zIndex: 4,
+       }}
+     />
+    
+     <div className="capture-button-container">
+       <div onClick={capture} className="capture-button"></div>
+     </div>
+   </div>
+   
       )}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 

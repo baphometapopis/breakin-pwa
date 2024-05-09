@@ -161,9 +161,9 @@
 }
 .capture-button-container {
   position: absolute;
-  bottom: 20px; /* Adjust top position as needed */
+  bottom: 10px; /* Adjust top position as needed */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(90deg);
   z-index: 1;
 }
 

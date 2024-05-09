@@ -1,11 +1,8 @@
-/* eslint-disable */
-
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 
-import './VideoRecorder.css'
+import './VideoRecorder.css';
 
 const VideoRecorder = () => {
   const webcamRef = useRef(null);
@@ -22,29 +19,34 @@ const VideoRecorder = () => {
     facingMode: { exact: "environment" }, // This will use the back camera if available
 
   };
-
   const MAX_VIDEO_DURATION = 90; // Maximum video duration in seconds (1 minute and 30 seconds)
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
+    // Start the timer when capturing begins
+    let intervalId;
+    if (capturing) {
+      intervalId = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000); // Update elapsed time every second
+    }
+
+    // Clear the interval when capturing stops or component unmounts
+    return () => clearInterval(intervalId);
+  }, [capturing]);
+
+  useEffect(() => {
     // This effect will run whenever recordedChunks state changes
     if (recordedChunks.length > 0 && !capturing) {
-      const blob = new Blob(recordedChunks, {
-        type: "video/webm",
-        
-      });
-      const fileName = "video.webm"; // Add the desired filename with extension
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      const fileName = "video.webm";
 
       const videoFile = new File([blob], fileName, { type: "video/webm" });
-
-
-      console.log(blob,'videoFile')
 
       const videoUri = URL.createObjectURL(blob);
       navigation("/VideoPreview", {
         state: {
           videoUri: videoFile,
-
           videoblob: videoUri,
         },
       });
@@ -53,14 +55,20 @@ const VideoRecorder = () => {
 
   const handleStartCaptureClick = () => {
     setCapturing(true);
+    setElapsedTime(0); // Reset elapsed time when capturing starts
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: "video/webm"
+      mimeType: "video/webm",
     });
     mediaRecorderRef.current.addEventListener(
       "dataavailable",
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
+
+    // Stop capturing and save video after MAX_VIDEO_DURATION seconds
+    setTimeout(() => {
+      handleStopCaptureClick();
+    }, MAX_VIDEO_DURATION * 1000);
   };
 
   const handleDataAvailable = ({ data }) => {
@@ -88,6 +96,7 @@ const VideoRecorder = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -96,29 +105,31 @@ const VideoRecorder = () => {
 
   return (
     <div className="camera-container">
-    <div>
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat="image/jpeg"
-        height={windowSize.height}
-        videoConstraints={videoConstraints}
-      />
-      {<div className="capture-button-container">
-
-     {!capturing ?  <div onClick={handleStartCaptureClick} className="capture-button"></div>:
-        <div onClick={handleStopCaptureClick} className="video-duration">
-          <div className="capture-button">
-            <div className="stop-rec"/>
-          </div>
-         <p className="duration-timer">  {formatTime(elapsedTime)} / {formatTime(MAX_VIDEO_DURATION)}</p>
-        </div>}
-      </div>}
+      <div>
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat="image/jpeg"
+          height={windowSize.height}
+          videoConstraints={videoConstraints}
+        />
+        <div className="capture-button-container">
+          {!capturing ? (
+            <div onClick={handleStartCaptureClick} className="capture-button"></div>
+          ) : (
+            <div onClick={handleStopCaptureClick} className="video-duration">
+              <div className="capture-button">
+                <div className="stop-rec"/>
+              </div>
+              <p className="duration-timer">
+                {formatTime(elapsedTime)} / {formatTime(MAX_VIDEO_DURATION)}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-  </div>
   );
 };
-
-
 
 export default VideoRecorder;

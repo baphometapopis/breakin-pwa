@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { submit_inspection_Video } from "../Api/submitInspectionQuestion";
+import { submit_odometer_Reading } from "../Api/submitOdometerReading";
 import Header from "../Component/Header";
 import { fetchDataLocalStorage } from "../Utils/LocalStorage";
 import "./VideoPreview.css"; // Import CSS file for styling
+import {  toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const VideoPreview = () => {
   const { state } = useLocation();
@@ -34,10 +37,12 @@ const VideoPreview = () => {
   }
 
   const submitVideo = async () => {
+
     if (!odometerReading) {
       setOdometerError(true); // Set odometer error if reading is not provided
       return; // Stop submission if odometer reading is missing
     }
+    toast.info("Uploading Video...", { autoClose: false });
 
     const data = {
       pos_id: LocalData?.pos_login_data?.id,
@@ -48,9 +53,20 @@ const VideoPreview = () => {
       videouri: videoUri
     };
 
+    const odometerres= await submit_odometer_Reading(odometerReading,data)
+    console.log(odometerres,'odometerReading')
+    toast.dismiss();
     const res = await submit_inspection_Video(data);
     if (res?.status) {
       navigate(`/proposal-info/${ProposalNo}`,{replace:true});
+      toast.success('Video Uploaded', {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -86,17 +102,23 @@ const VideoPreview = () => {
   return (
     <div className="container">
       <Header checkLocal={true} />
-      <div className={"optionCard"}>
+      <div className={"optionCard1"}>
         <div className="input-container">
-          <input
-            type="text"
-            placeholder="Odometer Reading"
-            value={odometerReading}
-            onChange={(e) => {
-              setOdometerReading(e.target.value);
-              setOdometerError(false); // Reset odometer error on input change
-            }}
-          />
+        <input
+  type="text"
+  placeholder="Odometer Reading"
+  value={odometerReading}
+  onChange={(e) => {
+    const input = e.target.value;
+    // Allow only numbers using regular expression
+    if (/^\d*$/.test(input)) {
+      setOdometerReading(input);
+      setOdometerError(false); // Reset odometer error on input change
+    }
+  }}
+  pattern="\d*" // Allow only numbers
+/>
+
           {odometerError && <p className="error">Odometer reading is required</p>}
         </div>
         <video style={{ width: '100%', height: '80%' }} controls>
