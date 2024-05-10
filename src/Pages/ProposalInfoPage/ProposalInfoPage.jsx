@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // import { isInspectionImagesFolderEmpty } from "../Utils/checkLocalStoragefordata";
 import "./ProposalInfoPage.css"; // Import CSS module
-import { CallIcon, StartInspection } from "../../Constant/ImageConstant";
+import { CallIcon, CustomerCare, IconClose, StartInspection, WhatsappIcon } from "../../Constant/ImageConstant";
 import { fetchProposalDetails } from "../../Api/fetchProposalDetails";
 import { url } from "../../Api/ApiEndpoint";
 import { fetchLoginDataByProposalNoAPi } from "../../Api/fetchLoginDetailsByProposalNo";
@@ -18,10 +18,21 @@ export const ProposalInfoPage = ({ route }) => {
   // const [isErrorVisible, setisErrorVisible] = useState(false);
   const [proposalInfo, setProposalInfo] = useState();
   const [proposalStatusData, setProposalStatusData] = useState();
+  const [isCopied,setIscopied]=useState(false)
+  const [isCopied1,setIscopied1]=useState(false)
+
 
   const [isCustomerCareModalVisible, setIsCustomerCareModalVisible] =
     useState(false);
   const navigate = useNavigate();
+const handleCopy = (phoneNumber) => {
+  navigator.clipboard.writeText(phoneNumber);
+  setIscopied(true)
+};
+const handleCopy1 = (phoneNumber) => {
+  navigator.clipboard.writeText(phoneNumber);
+  setIscopied1(true)
+};
 
   const fetchData = useCallback(async (proposaldata) => {
     // setLoading(true);
@@ -199,6 +210,31 @@ export const ProposalInfoPage = ({ route }) => {
       ) : (
         <p>proposal not found</p>
       )}
+        {isCustomerCareModalVisible && (
+  <div className="customerCareModal">
+    <div className="modalContent">
+      <img onClick={toggleCustomerCareModal} src={IconClose} alt='close' style={{height:'25px',width:'25px',position:'absolute',right:20,top:10}}/>
+      <h4>Customer Care</h4>
+      <div className="phoneNumbers">
+        <img src={CustomerCare} alt="customer care" style={{ height: '25px', width: '35px' }} /> 
+        <span>+919372777632</span>
+        <p style={{fontSize:'14px',marginLeft:'10px',marginRight:'10px'}} onClick={() => handleCopy('+919372777632')}>{isCopied?'Copied':'Copy'}</p>
+        <a href="https://wa.me/9372777632" target="_blank" rel="noopener noreferrer">
+          <img src={WhatsappIcon} alt="WhatsApp" style={{ height: '25px', width: '25px' }} />
+        </a>
+      </div>
+      <div className="phoneNumbers">
+        <img src={CustomerCare} alt="customer care" style={{ height: '25px', width: '35px' }} /> 
+        <span>+919137857548</span>
+        <p style={{fontSize:'14px',marginLeft:'10px',marginRight:'10px'}} onClick={() => handleCopy1('+919137857548')}>{isCopied1?'Copied':'Copy'}</p>
+        <a href="https://wa.me/9137857548" target="_blank" rel="noopener noreferrer">
+          <img src={WhatsappIcon} alt="WhatsApp" style={{ height: '25px', width: '25px' }} />
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

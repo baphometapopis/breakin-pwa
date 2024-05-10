@@ -1,3 +1,11 @@
+@import url('../../colors.css');
+
+.checkpointcontainer{
+  background-color:var(--BACKGROUND_COLOR);
+  padding-top: 65px;
+  padding-bottom: 25px;
+
+}
 .optionCard {
   background-color: white;
   border-radius: 8px;
@@ -47,5 +55,10 @@
     margin: 0; /* Adjust margin for better spacing on mobile devices */
     border-radius: 0;
     margin-top: 2px;
+  }
+  .checkpointcontainer{
+    background-color: white;
+    padding-top: 65px;
+    padding-bottom: 25px;
   }
 }

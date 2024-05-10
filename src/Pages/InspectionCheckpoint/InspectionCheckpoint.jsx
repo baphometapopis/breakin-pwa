@@ -147,6 +147,7 @@ setIsInstructionModalVisible(true)
   // Function to submit questions
   // eslint-disable-next-line
   async function submitQuestions(questionDataList) {
+
     setIsLoading(true)
     const retryArray = [];
     const failedSubmissionsArray = [];
@@ -255,7 +256,7 @@ setIsInstructionModalVisible(true)
 
   useEffect(()=>{},[FailedArray])
   return (
-    <div className="container">
+    <div className="checkpointcontainer">
                       <Header checkLocal={true} /> {/* Include the Header component */}
 
       {/* <CommonModal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} type={modalType} /> */}
@@ -269,20 +270,21 @@ setIsInstructionModalVisible(true)
             <div className="options">
               {Object.keys(question.answers_obj).map((answerId) => (
                 <div key={answerId}>
+
                   <input
                     type="radio"
                     id={`answer_${question.breakin_inspection_post_question_id}_${answerId}`}
                     name={`question_${question.breakin_inspection_post_question_id}`} // Unique name attribute
-                    value={answerId}
+                    value={question.answers_obj[answerId]}
                     checked={
                       String(selectedAnswers[
                         question.breakin_inspection_post_question_id
-                      ]) === String(answerId)
+                      ]) === String(question.answers_obj[answerId])
                     }
                     onChange={() =>
                       handleRadioChange(
                         question.breakin_inspection_post_question_id,
-                        String(answerId)
+                        String(question.answers_obj[answerId])
                       )
                     }
                   />

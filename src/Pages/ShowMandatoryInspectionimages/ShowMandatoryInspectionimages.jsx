@@ -187,9 +187,7 @@ setIsInstructionModalVisible(true)
       <div className="imageGrid">
         {capturedImagesWithOverlay?.map((item, index) => (
           <div key={index} className="imageContainer">
-            {/* {submittedImages.includes(item.part) && (
-              <img className="checkIcon" src={IconCheck} alt="Check Icon" />
-            )} */}
+          
             <img
               className="image"
               src={item?.uri}

@@ -2,6 +2,7 @@
 
 // App.js
 import { ToastContainer } from "react-toastify";
+import './App.css'
 
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
@@ -17,6 +18,7 @@ import ImageWithFooter from "./Pages/CameraScreen/ImageWithFooter";
 
 function App() {
   return (
+    <div className="app-container">
     <BrowserRouter>
               <ToastContainer />
 
@@ -31,7 +33,7 @@ function App() {
           path="/CheckPermission"
           element={<PermissionPage />}
         />
-        <Route
+        <Route 
           path="/InspectionCheckpoint"
           element={<InspectionCheckpoint />}
         />
@@ -48,6 +50,7 @@ function App() {
         <Route path="/VideoPreview" element={<VideoPreview />} />
       </Routes>
     </BrowserRouter>
+    </div>
   );
 }
 

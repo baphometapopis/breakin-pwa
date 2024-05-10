@@ -12,6 +12,7 @@ export const submit_inspection_checkpointData = async data => {
   formdata.append('answer_id', data?.answer_id);
   formdata.append('inspection_type', data?.inspection_type);
   const url = Api_Endpoints.submit_inspection_checkpoint;
+  
 
   try {
     const response = await fetch(url, {

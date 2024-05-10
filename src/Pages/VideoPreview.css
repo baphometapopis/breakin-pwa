@@ -14,11 +14,10 @@
     background-color: white;
     border-radius: 8px;
     padding: 20px;
-    width: 90%;
-    width: 90%;
+    width: 85%;
     max-width: 500px;
     box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    margin: 70px auto;
   }
 
   .button-container{

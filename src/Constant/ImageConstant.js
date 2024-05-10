@@ -28,6 +28,7 @@ import NoInternet from "../Assets/Images/NoInternet.png";
 import CancelledProposal from "../Assets/Images/cancelledproposal.jpeg";
 import PlaceholderImage from "../Assets/Images/placeholderimage.jpeg";
 
+
 import AuthenticateOTP from "../Assets/Images/OtpAuthenticate.png";
 import Congratulation from "../Assets/Images/congratulation.png";
 import Odometer from "../Assets/Images/odometer.jpeg";
@@ -62,6 +63,10 @@ import Logout from "../Assets/Icons/drawerIcons/logout.png";
 
 import Magma from "../Assets/IC_Logo/Magma1.png";
 import Success from "../Assets/Images/Sucess.png";
+import CustomerCare from "../Assets/Icons/customercare.png";
+import WhatsappIcon from "../Assets/Icons/whatsappIcon.png";
+
+
 
 
 export {
@@ -119,4 +124,7 @@ export {
   RadioChecked,
   Search2,
   Success,
+  CustomerCare,
+  WhatsappIcon
 };
+
