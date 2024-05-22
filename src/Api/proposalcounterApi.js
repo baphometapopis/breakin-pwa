@@ -1,8 +1,8 @@
 import {Api_Endpoints} from './ApiEndpoint';
 
-export const fetchProposalCounter = async (pos_id, business_id) => {
+export const fetchProposalCounter = async (user_id, business_id) => {
   var formdata = new FormData();
-  formdata.append('pos_id', pos_id);
+  formdata.append('user_id', user_id);
   formdata.append('business_id', business_id);
 
   const url = Api_Endpoints.proposal_counter_endpoint;

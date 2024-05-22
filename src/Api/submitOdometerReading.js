@@ -1,18 +1,12 @@
 import {Api_Endpoints} from './ApiEndpoint';
 
-export const submit_odometer_Reading = async (odometerReading, data) => {
-  console.log(odometerReading, data, 'odometerReading');
+export const submit_odometer_Reading = async (data) => {
   var formdata = new FormData();
 
-  formdata.append(
-    'odometer_reading',
-    JSON.stringify({
-      odometer: odometerReading,
-      pos_id: data?.pos_id,
-      break_in_case_id: data?.break_in_case_id,
-      inspection_type: data?.inspection_type,
-    }),
-  );
+  formdata.append('odometer', data?.odometer);
+  formdata.append('user_id',data?.user_id );
+  formdata.append('break_in_case_id', data?.break_in_case_id);
+
 
   // formdata.append('inspection_type', data?.inspection_type);
   const url = Api_Endpoints.submit_odometer_reading_Endpoint;

@@ -1,5 +1,5 @@
-import Logo from "../Assets/Logo/mpn_logo.png";
-import Logo1 from "../Assets/Logo/mpn-logo.png";
+import Logo from "../Assets/Logo/ezclick.png";
+import Logo1 from "../Assets/Logo/ezclick.png";
 
 import UserIcon from "../Assets/Icons/userIcon.png";
 import LockIcon from "../Assets/Icons/lockIcon.png";
@@ -63,13 +63,15 @@ import Logout from "../Assets/Icons/drawerIcons/logout.png";
 
 import Magma from "../Assets/IC_Logo/Magma1.png";
 import Success from "../Assets/Images/Sucess.png";
+import CarIcon from "../Assets/Images/carIcon.png";
+
 import CustomerCare from "../Assets/Icons/customercare.png";
 import WhatsappIcon from "../Assets/Icons/whatsappIcon.png";
 
 
 
 
-export {
+export {CarIcon,
   RejectedIcon,
   PlaceholderImage,
   SampleImage,

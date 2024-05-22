@@ -2,7 +2,7 @@ import { Api_Endpoints } from "./ApiEndpoint";
 
 export const fetchProposalDetails = async (data) => {
   var formdata = new FormData();
-  formdata.append("proposal_list_id", data);
+  formdata.append("proposal_no", data);
 
   const url = Api_Endpoints.fetchProposalDetailsEndpoint;
 

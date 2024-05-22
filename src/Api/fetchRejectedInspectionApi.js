@@ -3,7 +3,7 @@ import {Api_Endpoints} from './ApiEndpoint';
 export const fetchRejectedInspectionApi = async data => {
   console.log(data, 'fetch_breaking_rejected_data');
   var formdata = new FormData();
-  formdata.append('pos_id', data?.id);
+  formdata.append('user_id', data?.id);
   formdata.append('is_data', '1');
 
   formdata.append('business_id', data?.business_id);

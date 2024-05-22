@@ -26,13 +26,13 @@ const VideoPreview = () => {
 
   const fetchDataFromLocalStorage = async () => {
     const localdata = await fetchDataLocalStorage('Claim_loginDetails')
-    const proposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
-    const proposalNo = await fetchDataLocalStorage('proposal_no')
+    const localproposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
 
-    if (localdata && proposalInfo && proposalNo) {
-      setLocaldata(localdata?.pos_login_data)
-      setProposalInfo(proposalInfo)
-      setProposalNo(proposalNo)
+      console.log(localproposalInfo)
+    if (localdata && localproposalInfo) {
+      setLocaldata(localdata?.login_data?.user_detailss)
+      setProposalInfo(localproposalInfo)
+      setProposalNo(localproposalInfo?.data?.proposal_no)
     }
   }
 
@@ -44,22 +44,30 @@ const VideoPreview = () => {
     }
     toast.info("Uploading Video...", { autoClose: false });
 
-    const data = {
-      pos_id: LocalData?.pos_login_data?.id,
-      break_in_case_id: ProposalInfo?.break_in_case_id,
-      inspection_type: ProposalInfo?.inspection_type,
-      id: ProposalInfo?.id,
-      policy_endorsement_id: ProposalInfo?.policy_endorsement_id,
-      videouri: videoUri
+    const videopath = {
+      uri: videoblob,
+      type: 'video/mp4',
+      name: 'video.mp4',
     };
+    console.log(LocalData)
+    const data = {
+      user_id: LocalData?.id??1,
+      break_in_case_id: ProposalInfo?.break_in_case_id??1,
+      proposal_id: ProposalInfo?.id??1,
+      video: videoUri,
+      odometer:odometerReading,
+      breakin_steps:'completed'
+    };
+    console.log(videoUri,videoblob)
 
-    const odometerres= await submit_odometer_Reading(odometerReading,data)
+    const odometerres= await submit_odometer_Reading(data)
     console.log(odometerres,'odometerReading')
-    toast.dismiss();
     const res = await submit_inspection_Video(data);
     if (res?.status) {
-      navigate(`/proposal-info/${ProposalNo}`,{replace:true});
-      toast.success('Video Uploaded', {
+    toast.dismiss();
+
+      // navigate(`/proposal-info/${ProposalNo}`,{replace:true});
+      toast.success(res?.message, {
         position: "bottom-right",
         autoClose: 1000,
         hideProgressBar: true,
@@ -67,6 +75,23 @@ const VideoPreview = () => {
         pauseOnHover: true,
         theme: "colored",
       });
+
+            navigate(`/proposal-info/${ProposalNo}`,{replace:true});
+
+    }
+    else{
+    toast.dismiss();
+
+
+   toast.error(res?.message, {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+
     }
   };
 
@@ -98,6 +123,7 @@ const VideoPreview = () => {
   useEffect(() => {
     fetchDataFromLocalStorage();
   }, []);
+  useEffect(()=>{},[LocalData])
 
   return (
     <div className="container">

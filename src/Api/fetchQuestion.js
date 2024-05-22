@@ -5,7 +5,7 @@ export const fetch_Image_inspection_question = async data => {
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       //   body: formdata, // Use the FormData object directly
     });
     if (!response.ok) {
@@ -63,3 +63,5 @@ export const fetch_Checkpoint_inspection_question = async data => {
     throw new Error(`API Error - ${error}`);
   }
 };
+
+

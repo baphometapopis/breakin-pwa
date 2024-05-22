@@ -2,16 +2,23 @@
 // import React, { useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "react-html5-camera-photo/build/css/index.css";
 // import { Camera } from "react-html5-camera-photo";
 import "./CameraScreen.css"; // Import the CSS file
 import { fetch_Image_inspection_question } from "../../Api/fetchQuestion";
 import { fetchDataLocalStorage } from "../../Utils/LocalStorage";
 import { Logo1, PlaceholderImage } from "../../Constant/ImageConstant";
-
+import { submit_inspection_Images } from "../../Api/submitInspectionQuestion";
+import { extractBase64FromDataURI } from "../../Utils/convertImageToBase64";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const CameraScreen = () => {
+  const { state } = useLocation();
+  console.log('>>>>>>>>>>>>>',state)
+
   const canvasRef = useRef(null);
+
 
   const FrontvideoConstraints = {
     facingMode: 'user', // This will use the front camera if available
@@ -20,12 +27,13 @@ const CameraScreen = () => {
   };
 
   const BackvideoConstraints = {
-    // facingMode: 'user', // This will use the front camera if available
+    facingMode: 'user', // This will use the front camera if available
 
 
-    facingMode: { exact: "environment" }, // This will use the back camera if available
+    // facingMode: { exact: "environment" }, // This will use the back camera if available
 
   };
+  const [localData,setLocalData]=useState('')
 
 
   const [windowSize, setWindowSize] = useState({
@@ -82,7 +90,7 @@ const skipImage=()=>{
   
   
 
-  const handleSavePhoto = () => {
+  const handleSavePhoto = async () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
@@ -146,13 +154,12 @@ const skipImage=()=>{
       
       // Load main image
       const image = new Image();
-      image.onload = () => {
+      image.onload = async () => {
         // Draw the main image onto the canvas
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height - footerHeight);
         
         // Get data URL of the canvas
         const dataURL = canvas.toDataURL('image/jpeg');
-        console.log(dataURL);
         setCanvaImageData(dataURL);
         
         // Add dynamic overlay text
@@ -175,19 +182,52 @@ const skipImage=()=>{
         // Add the captured image data to the list
         setAllCapturedImages([...allCapturedImages, fileData]);
         
-        if (currentImageIndex < images.length - 1) {
-          // Move to the next image if available
-          setCurrentImageIndex(currentImageIndex + 1);
-          setCapturedImage(null);
-          setIsModalOpen(true);
+        console.log(currentImageIndex,'>>>>>>>>>>>>>>>>>>>>>>>>',typeof images,'>>>>>>>>>>fileData',fileData,images.length)
+        
+        if(images.length === 1) {
+          let data = {
+            break_in_case_id: localData?.proposal_data?.breakin_inspection_id,
+            question_id: images[currentImageIndex]?.id,
+            user_id: localData?.user_details?.id,
+            proposal_id: ProposalInfo?.id,
+            image: extractBase64FromDataURI(dataURL),
+            breakin_steps: 'images'
+          };
+          
+          const response = await submitImage(data);
+
+          if(response){
+            navigation("/ShowInspectionImages", {
+              state: {
+                capturedImagesWithOverlay: allCapturedImages,
+                proposalInfo: ProposalInfo,
+              },
+            });
+          }
         } else {
-          // Navigate to the next screen if all images are captured
-          navigation("/ShowInspectionImages", {
-            state: {
-              capturedImagesWithOverlay: allCapturedImages,
-              proposalInfo: ProposalInfo,
-            },
-          });
+          if (currentImageIndex < images.length - 1) {
+            // Move to the next image if available
+            setCapturedImage(null);
+            setIsModalOpen(true);
+            let data = {
+              break_in_case_id: localData?.proposal_data?.breakin_inspection_id,
+              question_id: images[currentImageIndex]?.id,
+              user_id: localData?.user_details?.id,
+              proposal_id: ProposalInfo?.id,
+              image: extractBase64FromDataURI(dataURL),
+              breakin_steps: 'images'
+            };
+            
+            submitImage(data);
+          } else {
+            // Navigate to the next screen if all images are captured
+            navigation("/ShowInspectionImages", {
+              state: {
+                capturedImagesWithOverlay: allCapturedImages,
+                proposalInfo: ProposalInfo,
+              },
+            });
+          }
         }
       };
       image.onerror = (error) => {
@@ -196,20 +236,63 @@ const skipImage=()=>{
       image.src = capturedImage;
     };
     logo.src = Logo1;
-};
+  };
+  
 
+const submitImage=async(data)=>{
+          const submittedresponse = await submit_inspection_Images(
+            data,
+            'From Submit Function',
+          );
+          
+          if(submittedresponse?.status){
+          setCurrentImageIndex(currentImageIndex + 1);
+
+            toast.success(submittedresponse?.message, {
+              position: "bottom-right",
+              autoClose: 1000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              theme: "colored",
+            });
+            return true
+          }else{
+            toast.error(submittedresponse?.message, {
+              position: "bottom-right",
+              autoClose: 1000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              theme: "colored",
+            });
+            return false
+
+          }
+}
 
 
   
 
   const fetchInspectionImages = async () => {
-    const ProposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
-    setProposalInfo(ProposalInfo)
+    const reslocaldata = await fetchDataLocalStorage('Claim_loginDetails')
 
+    const ProposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
+    
+    if (reslocaldata && ProposalInfo) {
+      setLocalData(reslocaldata)
+      setProposalInfo(ProposalInfo?.data)
+    }
 
 
     const imageRes = await fetch_Image_inspection_question();
-    setImages(imageRes.data);
+    if(state?.path==='RetakeImage'){
+    setImages(state?.data)
+      console.log(state?.data,'UUUUUUUUUUUU')
+  }else{
+      setImages(imageRes.data);
+
+    }
   };
 
   useEffect(() => {
@@ -251,7 +334,9 @@ const skipImage=()=>{
     };
   }, []); // Empty dependency array ensures that effect only runs on mount and unmount
 
-  useEffect(() => {}, [isModalOpen, images,ProposalInfo,VideoConstraints]);
+  useEffect(() => {
+    console.log(images,'IIIIIOOOOOOOOOOOOOOO')
+  }, [isModalOpen, images,ProposalInfo,VideoConstraints,localData]);
 
   useEffect(()=>{
     if(images[currentImageIndex]?.id==17)

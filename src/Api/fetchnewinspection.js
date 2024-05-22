@@ -4,7 +4,7 @@ export const fetchNewInspection = async (data) => {
   console.log(data, "getProposalDetails");
 
   var formdata = new FormData();
-  formdata.append("pos_id", data?.id);
+  formdata.append("user_id", data?.id);
   formdata.append("is_data", "1");
 
   formdata.append("business_id", data?.business_id);

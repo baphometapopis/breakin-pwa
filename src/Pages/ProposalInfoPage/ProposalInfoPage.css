@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center; */
   overflow-x: scroll;
-  padding-top: 58px;
+  padding-top: 78px;
 }
 
 
@@ -67,7 +67,7 @@
 
 .logoImage {
   display: block;
-  max-width: 150px; /* Ensure image fits within its container */
+  width: 150px; /* Ensure image fits within its container */
   height: auto;
 }
 

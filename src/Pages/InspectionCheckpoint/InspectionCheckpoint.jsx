@@ -113,12 +113,32 @@ setIsInstructionModalVisible(true)
 }
 
   const handleSubmit = async () => {
+    setIsSubmitting(true)
+
 
     if (allQuestionsAnswered()) {
-      setIsSubmitting(true); // Start loading
-      console.log("All questions answered:", selectedAnswers);
-      await submitQuestions(selectedAnswers);
-      toast.success('Inspection Submitted', {
+
+      const formattedData = Object.entries(selectedAnswers)
+      .map(([key, value]) => `${key}:${value}`)
+      .join(',');
+    
+      const data ={
+
+        user_id:localdata?.id,
+proposal_list_id:proposalInfo?.id,
+question_answer_ids:`${formattedData}`,
+product_type_id:proposalInfo?.v_product_type_id,
+breakin_steps:'images'
+
+      }
+
+
+
+      const submittedresponse = await submit_inspection_checkpointData(
+        data
+      );
+if(submittedresponse?.status){
+  toast.success(submittedresponse?.message, {
         position: "bottom-right",
         autoClose: 1000,
         hideProgressBar: true,
@@ -126,7 +146,22 @@ setIsInstructionModalVisible(true)
         pauseOnHover: true,
         theme: "colored",
       });
-      setIsSubmitting(false); // Stop loading
+setIsRequestDone(true)
+
+}else{
+  toast.error(submittedresponse?.message, {
+    position: "bottom-right",
+    autoClose: 1000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    theme: "colored",
+  });
+
+}
+setIsSubmitting(false)
+
+
     } else {
       // Display error messages for unanswered questions
       const updatedErrorMessages = {};
@@ -141,95 +176,18 @@ setIsInstructionModalVisible(true)
       });
       setErrorMessages(updatedErrorMessages);
     }
+    setIsSubmitting(false)
+
 // navigate('/camera')
   };
 
-  // Function to submit questions
-  // eslint-disable-next-line
-  async function submitQuestions(questionDataList) {
-
-    setIsLoading(true)
-    const retryArray = [];
-    const failedSubmissionsArray = [];
-    const questiondone = [];
-
-    try {
-      for (const [index, [questionId, answer]] of Object.entries(
-        questionDataList
-      ).entries()) {
-        const data = {
-          break_in_case_id: proposalInfo?.break_in_case_id,
-          question_id: questionId,
-          pos_id: localdata?.pos_login_data?.id,
-          proposal_list_id: proposalInfo?.id,
-          ic_id: proposalInfo?.ic_id,
-          answer_id: parseInt(answer),
-          inspection_type: proposalInfo?.inspection_type,
-        };
-
-        console.log(data);
-        try {
-          const submittedresponse = await submit_inspection_checkpointData(
-            data
-          );
-          if (submittedresponse?.status) {
-            console.log(`Question ${questionId} submitted successfully`);
-            setcurrentQuestion(questionId);
-            questiondone.push(Number(questionId));
-            // Update submission status for this question to true
-            updateSubmissionStatus(questionId, true);
-          }
-        } catch (error) {
-          console.error(
-            `Error submitting question ${questionId}: ${error.message}`
-          );
-          if (answer > 1) {
-            retryArray.push(questionId);
-          } else {
-            failedSubmissionsArray.push(questionId);
-          }
-          // Update submission status for this question to false
-          updateSubmissionStatus(questionId, false);
-        }
-
-        // Add a delay between API calls
-        const delayDuration = 3000; // 3 seconds
-        if (
-          index < Object.entries(questionDataList).length - 1 &&
-          !isSubmitting
-        ) {
-          await new Promise((resolve) => setTimeout(resolve, delayDuration));
-        }
-      }
-
-      console.log("All questions submitted successfully", questiondone);
-      setsubmittedQuestion(questiondone)
-      console.log("Failed submissions:", failedSubmissionsArray);
-    } catch (error) {
-      console.error(`Error submitting questions: ${error.message}`);
-    }
-    setIsLoading(false)
-    setIsRequestDone(true)
-    setFailedArray(failedSubmissionsArray)
-
-
-
-
-  }
 
   const isQuestionSubmitted = (questionId) => {
     return selectedAnswers.hasOwnProperty(questionId);
   };
   
 
-  // Function to update submission status for a question
-  const updateSubmissionStatus = (questionId, status) => {
-    setSubmissionStatus({
-      ...submissionStatus,
-      [questionId]: status,
-    });
-  };
-
+ 
   // Function to check if all questions have been answered
   const allQuestionsAnswered = () => {
     for (const question of checkpointQuestion) {
@@ -241,12 +199,13 @@ setIsInstructionModalVisible(true)
   };
 
   const fetchDataFromLocalStorage = async () => {
-    const localdata = await fetchDataLocalStorage('Claim_loginDetails')
+    const localdatares = await fetchDataLocalStorage('Claim_loginDetails')
     const proposalInfo = await fetchDataLocalStorage('Claim_proposalDetails')
 
-    if (localdata && proposalInfo) {
-      setLocaldata(localdata?.pos_login_data)
-      setProposalInfo(proposalInfo)
+    console.log(localdatares)
+    if (localdatares && proposalInfo) {
+      setLocaldata(localdatares?.user_details)
+      setProposalInfo(proposalInfo?.data)
     }
   }
 
@@ -254,7 +213,7 @@ setIsInstructionModalVisible(true)
     fetchDataFromLocalStorage()
   }, [])
 
-  useEffect(()=>{},[FailedArray])
+  useEffect(()=>{},[FailedArray,localdata])
   return (
     <div className="checkpointcontainer">
                       <Header checkLocal={true} /> {/* Include the Header component */}
@@ -306,7 +265,7 @@ setIsInstructionModalVisible(true)
 alignItems:'center'}}>
 
       {
-                  isRequestDone && FailedArray.length === 0 ? 
+                  isRequestDone ? 
 
         <button onClick={goNext} disabled={isSubmitting}>
           Next

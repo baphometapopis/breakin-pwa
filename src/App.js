@@ -4,6 +4,7 @@
 import { ToastContainer } from "react-toastify";
 import './App.css'
 
+import {  storeDataLocalStorage } from "../src/Utils/LocalStorage";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import HomePage from "./Pages/Home/HomePage";
 import CameraScreen from "./Pages/CameraScreen/CameraScreen";
@@ -15,8 +16,14 @@ import InspectionCheckpoint from "./Pages/InspectionCheckpoint/InspectionCheckpo
 import Header from "./Component/Header";
 import PermissionPage from "./Pages/Permmission Page/PermissionPage";
 import ImageWithFooter from "./Pages/CameraScreen/ImageWithFooter";
+import { useEffect } from "react";
 
 function App() {
+
+
+
+
+
   return (
     <div className="app-container">
     <BrowserRouter>

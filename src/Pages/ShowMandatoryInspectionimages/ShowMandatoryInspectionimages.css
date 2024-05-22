@@ -64,6 +64,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
 .closeButton {
@@ -72,6 +73,13 @@
     right: 10px;
     cursor: pointer;
     color: white;
+}
+
+.previewImagecontainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .fullScreenImage {
